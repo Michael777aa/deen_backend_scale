@@ -6,7 +6,7 @@
   <nav class="navigation-menu">
     <ul class="nav justify-content-center">
       <li class="nav-item">
-        <a class="nav-link" href="/admin">Home</a>
+        <a class="nav-link" href="/">Home</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/admin/product/all">Menu</a>
@@ -38,7 +38,13 @@
         <form action="/admin/coupanCreate" method="POST">
           <label for="name">Coupon Name:</label>
 
-          <input type="text" id="name" name="name" required />
+          <input
+            type="text"
+            id="name"
+            name="name"
+            autocomplete="off"
+            required
+          />
           <button
             class="random-button"
             type="button"
@@ -48,7 +54,13 @@
           ><br />
 
           <label for="expiry">Expiry Date:</label>
-          <input type="date" id="expiry" name="expiry" required /><br />
+          <input
+            type="date"
+            id="expiry"
+            name="expiry"
+            autocomplete="bday"
+            required
+          /><br />
 
           <label class="sale-exceed" for="discount"
             >Discount:
@@ -57,7 +69,13 @@
             ></label
           >
 
-          <input type="number" id="discount" name="discount" required /><br />
+          <input
+            type="number"
+            id="discount"
+            name="discount"
+            autocomplete="off"
+            required
+          /><br />
 
           <button type="submit">Create Coupon</button>
         </form>
@@ -73,16 +91,22 @@
             </tr>
           </thead>
           <!-- LOOP COUPONS: START -->
-          <% coupons.map(function(value, key) { %>
-          <tbody style="background: white">
-            <tr>
-              <td><%= key + 1 %></td>
-              <td><%= value.name %></td>
-              <td><%= value.expiry %></td>
-              <td><%= value.discount %></td>
-            </tr>
-          </tbody>
-          <% }) %>
+          <% if (coupons.length > 0) { %> <% coupons.map(function(value, key) {
+          %>
+          <tr>
+            <td><%= key + 1 %></td>
+            <td><%= value.name %></td>
+            <td><%= value.expiry %></td>
+            <td><%= value.discount %></td>
+          </tr>
+          <% }) %> <% } else { %>
+          <tr>
+            <td colspan="4" style="text-align: center;">
+              No coupons available
+            </td>
+          </tr>
+          <% } %>
+
           <!-- LOOP COUPONS: END -->
         </table>
       </div>

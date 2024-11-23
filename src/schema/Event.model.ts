@@ -30,7 +30,4 @@ const eventSchema = new Schema(
   { timestamps: true }
 );
 
-// Optional: Index to ensure unique event names and topics
-
 export default mongoose.model("Event", eventSchema);
-//

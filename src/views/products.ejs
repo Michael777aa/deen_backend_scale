@@ -83,7 +83,7 @@
                   
                   <td>
                     <!-- Product sale percentage input -->
-                    <label for="sale-<%= value._id %>">Sale %:</label>
+                    <span for="sale-<%= value._id %>">Sale %:</span>
                     <input  step="1" type="number" id="sale-<%= value._id %>" value="<%= value.productSale %>" min="0" max="100" class="product-sale-input" />
                     <button class="update-sale-btn" data-id="<%= value._id %>">Update</button>
                   </td>
@@ -115,7 +115,7 @@
           </div>
           <div class="login-input-frame">
             <div class="long-input">
-              <label>Product Name</label>
+              <span>Product Name</span>
               <input
                 type="text"
                 placeholder="Name"
@@ -132,7 +132,7 @@
           </div>
           <div class="half-input-frame">
             <div class="half-input">
-              <label>Product Price</label>
+              <span>Product Price</span>
               <input
                 type="number"
                 placeholder="Price"
@@ -142,7 +142,7 @@
             </div>
             
             <div class="half-input">
-              <label>Product Left Counts</label>
+              <span>Product Left Counts</span>
               <input
                 type="number"
                 placeholder="Counts"
@@ -153,7 +153,7 @@
           </div>
           <div class="half-input-frame">
             <div class="half-input">
-              <label>Product Category</label>
+              <span>Product Category</span>
               <select class="product-collection" name="productCollection">
                 <option value="FRUITS" selected>Fruits</option>
                 <option value="VEGETABLES">Vegetables</option>
@@ -164,7 +164,7 @@
             </div>
 
             <div class="half-input" id="product-collection">
-              <label>Product Feature</label>
+              <span>Product Feature</span>
               <select class="product-size" name="productSize">
                 <option value="FirstClass">First-class</option>
                 <option value="SecondClass" selected>Second-class</option>
@@ -176,12 +176,12 @@
           
           </div>
           <div class="long-input">
-            <label>Product Description</label>
+            <span>Product Description</span>
             <textarea name="productDesc" class="product-desc"></textarea>
           </div>
 
           <div class="img-frame">
-            <label>Product Images</label>
+            <span>Product Images</span>
             <div class="media-frame">
               <div class="upload-img-box">
                 <img src="/img/upload.svg" class="1" id="image-section-1" />

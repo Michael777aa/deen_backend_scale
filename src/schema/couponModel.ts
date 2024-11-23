@@ -20,7 +20,5 @@ const couponSchema = new Schema(
   { timestamps: true }
 );
 couponSchema.index({ name: 1, discount: 1 });
-// Optional: Index to ensure unique event names and topics
 
 export default mongoose.model("Coupon", couponSchema);
-//

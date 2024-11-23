@@ -1,14 +1,16 @@
-<%- include('includes/header') %>
+<%- include('includes/header', { title: "Admin Dashboard - Home" }) %>
 
 <link rel="stylesheet" type="text/css" href="/css/home.css" />
 
 <body>
-  <div class="home-container">
+  <main class="home-container">
     <header>
-      <nav class="navigation-menu">
+      <nav class="navigation-menu" aria-label="Main Navigation">
         <ul class="nav justify-content-center">
           <li class="nav-item">
-            <a class="nav-link active" href="/admin">Home</a>
+            <a class="nav-link active" href="/admin" aria-current="page"
+              >Home</a
+            >
           </li>
           <% if(!member) { %>
           <li class="nav-item">
@@ -28,27 +30,26 @@
             <a class="nav-link" href="/admin/user/all">Users</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link " href="/admin/coupanCreate">Coupon</a>
+            <a class="nav-link" href="/admin/coupanCreate">Coupon</a>
           </li>
-
           <li class="nav-item">
             <a
               class="nav-link logout"
               href="/admin/logout"
               onclick="return confirm('Do you want to logout?')"
-              >Logout</a
             >
+              Logout
+            </a>
           </li>
           <% } %>
         </ul>
       </nav>
-      <div class="welcome">
-        <h1>Welcome to the Homepage</h1>
-      </div>
     </header>
-  </div>
-
-  <script type="text/javascript" src="/js/home.js"></script>
+    <section class="welcome">
+      <h1>Welcome to the Homepage</h1>
+    </section>
+  </main>
+  <script type="text/javascript" src="/js/home.js" defer></script>
 </body>
 
 <%- include('includes/footer') %>
