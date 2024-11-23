@@ -5,7 +5,6 @@ import { Coupan, CoupanInput } from "../libs/types/coupan";
 import { HttpCode } from "../libs/Error";
 import { Message } from "../libs/Error";
 import cron from "node-cron";
-import * as bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 
 class CouponService {

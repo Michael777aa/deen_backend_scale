@@ -20,7 +20,6 @@ eventController.getEvents = async (req: Request, res: Response) => {
     res.status(HttpCode.OK).json(data);
   } catch (err) {
     console.log("Error, getEvents", err);
-    // Return errors in JSON format as well
     if (err instanceof Errors) {
       res.status(err.code).json({ message: err.message });
     } else {

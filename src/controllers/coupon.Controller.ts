@@ -2,18 +2,11 @@ import { Request, Response } from "express";
 import CouponService from "../models/Coupon.service";
 import { T } from "../libs/types/common";
 import { AdminRequest } from "../libs/types/member";
-import Errors, { HttpCode, Message } from "../libs/Error";
+import Errors, { Message } from "../libs/Error";
 
 const couponService = new CouponService();
 const couponController: T = {};
 
-/**********************   
-          SPA
-**********************/
-
-/**********************   
-          BSSR
-**********************/
 couponController.getAllCoupons = async (req: Request, res: Response) => {
   try {
     console.log("getAllCoupons");

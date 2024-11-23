@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import { EventStatus } from "../libs/enums/event.enum";
 
 const couponSchema = new Schema(
   {
