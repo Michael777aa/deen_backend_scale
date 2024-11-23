@@ -11,7 +11,7 @@ couponController.getAllCoupons = async (req: Request, res: Response) => {
   try {
     console.log("getAllCoupons");
     const data = await couponService.getAllCoupons();
-    res.render("Coupon", { coupons: data });
+    res.render("coupon", { coupons: data });
   } catch (err) {
     console.log("Error, getAllCoupons", err);
     if (err instanceof Errors) res.status(err.code).json(err);

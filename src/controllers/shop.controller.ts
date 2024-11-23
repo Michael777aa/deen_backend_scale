@@ -13,7 +13,7 @@ const shopController: T = {};
 shopController.goHome = (req: Request, res: Response) => {
   try {
     console.log("goHome");
-    res.render("Home");
+    res.render("home");
   } catch (err) {
     console.log("Error, goHome:", err);
   }
