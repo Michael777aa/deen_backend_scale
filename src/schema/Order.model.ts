@@ -1,32 +1,28 @@
-import mongoose, { Schema, Document } from "mongoose";
-import { OrderStatus } from "../libs/enums/order.enum";
+import mongoose, { Document, Model, Schema } from "mongoose";
 
-const orderSchema = new Schema(
+export interface IOrder extends Document {
+  courseId: string;
+  userId: string;
+  payment_info: object;
+}
+
+const orderSchema = new Schema<IOrder>(
   {
-    orderTotal: {
-      type: Number,
-      required: true,
-    },
-    orderDelivery: {
-      type: Number,
-      required: true,
-    },
-    orderStatus: {
+    courseId: {
       type: String,
-      enum: OrderStatus,
-      default: OrderStatus.PAUSE,
-    },
-    memberId: {
-      type: Schema.Types.ObjectId,
       required: true,
-      ref: "Member",
+    },
+    userId: {
+      type: String,
+      required: true,
+    },
+    payment_info: {
+      type: Object,
     },
   },
-  {
-    timestamps: true,
-    collection: "orders",
-  }
+  { timestamps: true }
 );
 
-// Export the Order model
-export default mongoose.model("Order", orderSchema);
+const OrderModel: Model<IOrder> = mongoose.model("Order", orderSchema);
+
+export default OrderModel;

@@ -1,0 +1,15 @@
+import CourseModel from "../schema/Course.model";
+import { CatchAsyncError } from "../libs/utils/catchAsyncErrors";
+import { Response } from "express";
+
+export const createCourse = CatchAsyncError(
+  async (data: any, res: Response) => {
+    const course = await CourseModel.create(data);
+    console.log("DATA 2", course);
+
+    res.status(201).json({
+      success: true,
+      course,
+    });
+  }
+);

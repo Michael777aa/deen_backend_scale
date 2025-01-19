@@ -1,79 +1,98 @@
-import { ExtendedRequest } from "../libs/types/member";
-import { T } from "../libs/types/common";
-import { Response } from "express";
-import Errors, { HttpCode } from "../libs/Error";
-import OrderService from "../models/Order.service";
-import { OrderInquiry, OrderUpdateInput } from "../libs/types/order";
-import { OrderStatus } from "../libs/enums/order.enum";
+import { NextFunction, Request, Response } from "express";
+import ejs from "ejs";
+import path from "path";
+import ErrorHandler from "../libs/Error";
+import { CatchAsyncError } from "../libs/utils/catchAsyncErrors";
+import { IOrder } from "../schema/Order.Model";
+import MemberModel, { IUser } from "../schema/Member.model";
+import CourseModel from "../schema/Course.model";
+import { newOrder } from "../services/order.service";
+import sendMail from "../libs/utils/sendMail";
+import NotificationModel from "../schema/Notification.model";
 
-const orderService = new OrderService();
-const orderController: T = {};
+export const createOrder = CatchAsyncError(
+  async (
+    req: Request & { user?: IUser },
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { courseId, payment_info } = req.body as IOrder;
 
-orderController.createOrder = async (req: ExtendedRequest, res: Response) => {
-  try {
-    console.log("createOrder");
+      const user = await MemberModel.findById(req.user?._id);
 
-    const orderItems = req.body;
-    console.log(req.body, "Req Npdy");
+      const courseExistInUser = user?.courses.some(
+        (course: any) => course._id.toString() === courseId
+      );
 
-    const totalPrice = orderItems[0].totalPrice;
-    const couponName = orderItems[0].couponName;
-    console.log("TOTAL PRICE ", totalPrice);
-    console.log(couponName, "coupon name");
+      if (courseExistInUser) {
+        return next(
+          new ErrorHandler("You have already purchased this course", 400)
+        );
+      }
+      const course = await CourseModel.findById(courseId);
 
-    const result = await orderService.createOrder(
-      req.member,
-      orderItems,
-      totalPrice,
-      couponName
-    );
+      if (!course) {
+        return next(new ErrorHandler("Course not found", 404));
+      }
 
-    res.status(HttpCode.CREATED).json(result);
-  } catch (err) {
-    console.log("Error, createOrder:", err);
-    if (err instanceof Errors) {
-      res.status(err.code).json(err);
-    } else {
-      res.status(Errors.standard.code).json(Errors.standard);
+      const data: any = {
+        courseId: course._id,
+        userId: user?._id,
+        payment_info,
+      };
+
+      newOrder(data, res, next);
+
+      const mailData = {
+        order: {
+          _id: course._id.toString().slice(0, 6),
+          name: course.name,
+          price: course.price,
+          date: new Date().toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+        },
+      };
+      const html = await ejs.renderFile(
+        path.join(__dirname, "../libs/mails/order-confirmation.ejs"),
+        { order: mailData }
+      );
+
+      try {
+        await sendMail({
+          email: user.email,
+          subject: "Order Confirmation",
+          template: "order-confirmation.ejs",
+          data: mailData,
+        });
+      } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+      }
+
+      user?.courses.push(course?._id);
+
+      await user?.save();
+
+      await NotificationModel.create({
+        user: user?._id,
+        title: "New Order",
+        message: `You have a new order from ${course?.name}`,
+      });
+
+      course.purchased ? (course.purchased += 1) : course.purchased;
+
+      await course.save();
+
+      newOrder(data, res, next);
+      res.status(201).json({
+        success: true,
+        order: course,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
     }
   }
-};
-
-orderController.getMyOrders = async (req: ExtendedRequest, res: Response) => {
-  try {
-    console.log("getMyOrders");
-    const { page, limit, orderStatus } = req.query;
-    const inquiry: OrderInquiry = {
-      page: Number(page),
-      limit: Number(limit),
-      orderStatus: orderStatus as OrderStatus,
-    };
-    const result = await orderService.getMyOrders(req.member, inquiry);
-    res.status(HttpCode.OK).json(result);
-  } catch (err) {
-    console.log("Error, getMyOrders:", err);
-    if (err instanceof Errors) {
-      res.status(err.code).json(err);
-    } else {
-      res.status(Errors.standard.code).json(Errors.standard);
-    }
-  }
-};
-
-orderController.updateOrder = async (req: ExtendedRequest, res: Response) => {
-  try {
-    console.log("updateOrder");
-
-    const input: OrderUpdateInput = req.body;
-    const result = await orderService.updateOrder(req.member, input);
-    res.status(HttpCode.OK).json(result);
-  } catch (err) {
-    console.log("Error, updateOrder:", err);
-    if (err instanceof Errors) {
-      res.status(err.code).json(err);
-    } else {
-      res.status(Errors.standard.code).json(Errors.standard);
-    }
-  }
-};
-export default orderController;
+);

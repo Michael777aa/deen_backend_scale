@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Confirmation - E-Learning</title>
+    <style>
+      /* General Styles */
+      body {
+          font-family: Arial, sans-serif;
+          background-color: #f4f4f4;
+          margin: 0;
+          padding: 20px;
+      }
+
+      .container {
+          max-width: 600px;
+          background-color: #ffffff;
+          padding: 20px;
+          margin: auto;
+          border-radius: 10px;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .message-sm {
+          text-align: center;
+      }
+
+      h1 {
+          color: #333;
+      }
+
+      .course-info {
+          margin-top: 20px;
+      }
+
+      table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 15px;
+      }
+
+      table, th, td {
+          border: 1px solid #ddd;
+      }
+
+      th, td {
+          padding: 10px;
+          text-align: left;
+      }
+
+      .first-td {
+          font-weight: bold;
+          background-color: #007bff;
+          color: #ffffff;
+      }
+
+      .second-td {
+          background-color: #f9f9f9;
+      }
+
+      .footer {
+          text-align: center;
+          margin-top: 20px;
+          font-size: 14px;
+          color: #777;
+      }
+
+      .btn {
+          display: inline-block;
+          background-color: #007bff;
+          color: #ffffff;
+          text-decoration: none;
+          padding: 10px 20px;
+          border-radius: 5px;
+          margin-top: 20px;
+          text-align: center;
+      }
+
+      .btn:hover {
+          background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Order Confirmation Header -->
+      <div class="message-sm">
+        <h1>Your E-Learning Order is Confirmed! 🎉</h1>
+        <p>We're just as excited as you are! Below are your order details.</p>
+      </div>
+
+      <!-- Order Information -->
+      <div class="course-info">
+        <h4>📦 Order Summary:</h4>
+        <table>
+          <tr>
+            <td><strong>Order #:</strong></td>
+            <td><%= order._id %></td>
+          </tr>
+          <tr>
+            <td><strong>Order Date:</strong></td>
+            <td><%= order.date %></td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Course Details -->
+      <h4>🎓 Course Details:</h4>
+      <table style="width: 90%; margin: auto; display: block;">
+        <tr>
+          <td class="second-td"><%= order.name %></td>
+          <td class="second-td">1</td>
+          <td class="second-td">$<%= order.price %></td>
+        </tr>
+      </table>
+
+      <!-- Subtotal Table -->
+      <table
+        class="table-row"
+        style="border-top: 1px solid #00000029; width: 90%; margin: auto; display: block;"
+      >
+        <tr>
+          <td class="col-2"><strong>Subtotal:</strong></td>
+          <td class="col-2">$<%= order.price %></td>
+        </tr>
+      </table>
+
+      <!-- Total Amount Table -->
+      <table
+        class="table-row"
+        style="width: 90%; margin: auto; display: block;"
+      >
+        <tr>
+          <td class="col-2"><strong>Total:</strong></td>
+          <td class="col-2">$<%= order.price %></td>
+        </tr>
+      </table>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>
+          If you have any questions, feel free to
+          <a href="abdullah.just777@gmail.com">contact our support team</a>.
+        </p>
+        <p>Thank you for choosing our platform! 🎓</p>
+      </div>
+    </div>
+  </body>
+</html>
