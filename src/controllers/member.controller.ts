@@ -14,7 +14,11 @@ import {
   sendToken,
 } from "../libs/utils/jwt";
 import { redis } from "../redis";
-import { getUserById } from "../services/user.service";
+import {
+  getAllUsersService,
+  getUserById,
+  updateUserRoleService,
+} from "../services/user.service";
 import cloudinary from "cloudinary";
 const memberModel = MemberModel;
 const memberController: T = {};
@@ -438,4 +442,66 @@ export const updateProfilePicture = CatchAsyncError(
   }
 );
 
+// get all users only afor admin
+
+export const getAllUsers = CatchAsyncError(
+  async (
+    req: Request & { user?: IUser },
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      getAllUsersService(res);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
 export default memberController;
+
+// update user role
+
+export const updateUserRole = CatchAsyncError(
+  async (
+    req: Request & { user?: IUser },
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id, role } = req.body;
+      updateUserRoleService(res, id, role);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+// delete user
+
+export const deleteUser = CatchAsyncError(
+  async (
+    req: Request & { user?: IUser },
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.body;
+      const user = await memberModel.findById(id);
+
+      if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+      }
+      await user.deleteOne({ id });
+
+      await redis.del(id);
+
+      res.status(200).json({
+        success: true,
+        message: "User deleted successfully",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);

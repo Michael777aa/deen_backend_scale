@@ -6,7 +6,7 @@ import { CatchAsyncError } from "../libs/utils/catchAsyncErrors";
 import { IOrder } from "../schema/Order.Model";
 import MemberModel, { IUser } from "../schema/Member.model";
 import CourseModel from "../schema/Course.model";
-import { newOrder } from "../services/order.service";
+import { getAllOrdersService, newOrder } from "../services/order.service";
 import sendMail from "../libs/utils/sendMail";
 import NotificationModel from "../schema/Notification.model";
 
@@ -93,6 +93,22 @@ export const createOrder = CatchAsyncError(
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+// get all orders only afor admin
+
+export const getAllOrders = CatchAsyncError(
+  async (
+    req: Request & { user?: IUser },
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      getAllOrdersService(res);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
     }
   }
 );

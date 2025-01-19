@@ -11,6 +11,9 @@ import {
   updatePassword,
   updateUserInfo,
   updateProfilePicture,
+  getAllUsers,
+  updateUserRole,
+  deleteUser,
 } from "./controllers/member.controller";
 import { isAuthenticated } from "./libs/utils/auth";
 
@@ -25,11 +28,29 @@ userRouter.post("/update-user-info", isAuthenticated, updateUserInfo);
 userRouter.post("/update-user-password", isAuthenticated, updatePassword);
 userRouter.post("/update-user-avatar", isAuthenticated, updateProfilePicture);
 userRouter.get(
+  "/get-users",
+  isAuthenticated,
+  // authorizeRoles("admin"),
+  getAllUsers
+);
+userRouter.get(
   "/logout",
   isAuthenticated, //authorizeRoles("admin"),
   logoutUser
 );
 userRouter.get("/refresh", updateAccessToken);
 userRouter.get("/me", isAuthenticated, getUserInfo);
+userRouter.post(
+  "/update-user",
+  isAuthenticated,
+  //authorizeRoles("admin"),
+  updateUserRole
+);
+userRouter.post(
+  "/delete-user",
+  isAuthenticated,
+  //authorizeRoles("admin"),
+  deleteUser
+);
 
 export default userRouter;

@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import ErrorHandler from "../libs/Error";
 import { CatchAsyncError } from "../libs/utils/catchAsyncErrors";
 import cloudinary from "cloudinary";
-import { createCourse } from "../services/course.service";
+import { createCourse, getAllCoursesService } from "../services/course.service";
 import ejs from "ejs";
 import path from "path";
 import CourseModel from "../schema/Course.model";
@@ -426,6 +426,23 @@ export const addReplyToReview = CatchAsyncError(
       //   success: true,
       //   course,
       // });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+//
+// get all users only afor admin
+
+export const getAllCoursess = CatchAsyncError(
+  async (
+    req: Request & { user?: IUser },
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      getAllCoursesService(res);
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
