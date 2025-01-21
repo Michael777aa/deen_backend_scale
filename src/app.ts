@@ -1,5 +1,5 @@
 import cors from "cors";
-import express from "express";
+import express, { NextFunction, Response, Request } from "express";
 import path from "path";
 import morgan from "morgan";
 import { MORGAN_FORMAT } from "./libs/config";
@@ -11,6 +11,8 @@ import userRouter from "./router";
 import courseRouter from "./course.router";
 import orderRouter from "./order.router";
 import notificationRouter from "./notification.router";
+import analyticsRouter from "./analytics.router";
+import layoutRouter from "./layout.router";
 
 //1-ENTRANCE
 const app = express();
@@ -31,6 +33,16 @@ app.use("/user", userRouter); //SPA
 app.use("/course", courseRouter);
 app.use("/order", orderRouter);
 app.use("/notification", notificationRouter);
+app.use("/analyze", analyticsRouter);
+app.use("/layout", layoutRouter);
+
+app.all("*", (req: Request, res: Response, next: NextFunction) => {
+  const err: any = new Error(`Route ${req.originalUrl} not found`);
+  err.statusCode = 404;
+  next(err);
+});
+
+app.use(ErrorMiddleware);
 
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
