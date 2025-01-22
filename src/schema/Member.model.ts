@@ -41,7 +41,7 @@ const memberSchema = new Schema(
 
     password: {
       type: String,
-      minlegnth: [6, "Password must be at least 6 characters"],
+      minlength: [6, "Password must be at least 6 characters"],
       select: false,
     },
     avatar: {

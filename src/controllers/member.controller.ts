@@ -116,7 +116,8 @@ export const activateUser = CatchAsyncError(
       if (existUser) {
         return next(new ErrorHandler("Email already exists", 400)); // Throw error instead of next()
       }
-      const user = await memberModel.create({ name, email, password });
+      await memberModel.create({ name, email, password });
+
       res.status(201).json({ success: true });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));

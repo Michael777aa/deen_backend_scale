@@ -5,7 +5,6 @@ import { Response } from "express";
 export const createCourse = CatchAsyncError(
   async (data: any, res: Response) => {
     const course = await CourseModel.create(data);
-    console.log("DATA 2", course);
 
     res.status(201).json({
       success: true,

@@ -29,7 +29,8 @@ app.set("views", path.join(__dirname, "mails"));
 app.set("view engine", "ejs");
 
 // 4-ROUTERS
-app.use("/user", userRouter); //SPA
+
+app.use("/user", userRouter);
 app.use("/course", courseRouter);
 app.use("/order", orderRouter);
 app.use("/notification", notificationRouter);
@@ -38,6 +39,7 @@ app.use("/layout", layoutRouter);
 
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   const err: any = new Error(`Route ${req.originalUrl} not found`);
+
   err.statusCode = 404;
   next(err);
 });
