@@ -12,7 +12,7 @@ import { IUser } from "../schema/Member.model";
 import mongoose from "mongoose";
 import sendMail from "../libs/utils/sendMail";
 import NotificationModel from "../schema/Notification.model";
-
+import axios from "axios";
 export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -473,6 +473,34 @@ export const deleteCourse = CatchAsyncError(
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+export const generateVideoUrl = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { videoId } = req.body;
+      console.log("VIDEO", videoId);
+
+      const response = await axios.post(
+        `https://dev.vdocipher.com/api/videos/${videoId}/otp`,
+        {
+          ttl: 300,
+        },
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Apisecret ${process.env.VDOCIPHER_API_SECRET?.trim()}`,
+          },
+        }
+      );
+      console.log("RESPONSE", response);
+
+      res.json(response.data);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
     }
   }
 );

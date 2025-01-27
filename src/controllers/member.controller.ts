@@ -306,7 +306,6 @@ interface IUpdateUserInfo {
 
 interface IUpdateUserInfo {
   name?: string;
-  email?: string;
 }
 
 export const updateUserInfo = CatchAsyncError(
@@ -316,7 +315,7 @@ export const updateUserInfo = CatchAsyncError(
     next: NextFunction
   ) => {
     try {
-      const { email, name } = req.body as IUpdateUserInfo;
+      const { name } = req.body as IUpdateUserInfo;
       const userId = req.user?._id;
 
       if (!userId) {
@@ -324,14 +323,6 @@ export const updateUserInfo = CatchAsyncError(
       }
 
       const user = await memberModel.findById(userId);
-
-      if (email && user) {
-        const isEmailExist = await memberModel.findOne({ email });
-        if (isEmailExist) {
-          return next(new ErrorHandler("Email already exists", 400)); // ✅ Prevent updating to an existing email
-        }
-        user.email = email;
-      }
 
       if (name && user) {
         user.name = name;
@@ -405,6 +396,7 @@ export const updateProfilePicture = CatchAsyncError(
     try {
       const { avatar } = req.body;
       const userId = req.user?._id;
+      console.log("AVATAR", avatar);
 
       if (!userId) {
         return next(new ErrorHandler("User not authenticated", 401)); // ✅ Ensures user is logged in
