@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "FreshNest",
+      name: "LMS",
       cwd: "./",
       script: "./dist/server.js",
       watch: false,

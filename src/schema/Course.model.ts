@@ -20,7 +20,7 @@ interface ILink extends Document {
 
 interface ICourseData extends Document {
   title: string;
-  descrtiption: string;
+  description: string;
   videoUrl: string;
   videoThumbnail: object;
   videoSection: string;
@@ -33,7 +33,7 @@ interface ICourseData extends Document {
 
 interface ICourse extends Document {
   name: string;
-  descrtiption?: string;
+  description?: string;
   price: number;
   estimatedPrice?: number;
   thumbnail: object;
@@ -73,7 +73,7 @@ const courseDataSchema = new Schema<ICourseData>({
   videoUrl: String,
   title: String,
   videoSection: String,
-  descrtiption: String,
+  description: String,
   videoLength: Number,
   videoPlayer: String,
   links: [linkSchema],
@@ -87,7 +87,7 @@ const courseSchema = new Schema<ICourse>(
       type: String,
       required: true,
     },
-    descrtiption: {
+    description: {
       type: String,
       required: true,
     },

@@ -13,6 +13,7 @@ import mongoose from "mongoose";
 import sendMail from "../libs/utils/sendMail";
 import NotificationModel from "../schema/Notification.model";
 import axios from "axios";
+
 export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -23,7 +24,7 @@ export const uploadCourse = CatchAsyncError(
         const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
           folder: "courses",
         });
-
+        console.log("IMAGE", thumbnail);
         data.thumbnail = {
           public_id: myCloud.public_id,
           url: myCloud.secure_url,

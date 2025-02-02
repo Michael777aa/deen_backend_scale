@@ -18,4 +18,4 @@ pm2 start process.config.js --env production
 
 
 # npm i
-# pm2 start "npm run start:prod" --name=FreshNest
+# pm2 start "npm run start:prod" --name=LMS

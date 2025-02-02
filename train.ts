@@ -24,8 +24,8 @@ console.log(findDisappearedNumbers([1, 3, 5, 7]));
 PM2 COMMANDS:
 
 pm2 ls
-pm2 start dist/server.js --name=FreshNest
-pm2 start "npm run start:prod" --name=FreshNest
+pm2 start dist/server.js --name=LMS
+pm2 start "npm run start:prod" --name=LMS
 pm2 stop id
 pm2 delete id
 pm2 restart id
