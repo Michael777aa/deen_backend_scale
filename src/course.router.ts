@@ -13,7 +13,10 @@ import {
   uploadCourse,
 } from "./controllers/course.controller";
 import { isAuthenticated } from "./libs/utils/auth";
-import { authorizeRoles } from "./controllers/member.controller";
+import {
+  authorizeRoles,
+  updateAccessToken,
+} from "./controllers/member.controller";
 
 const courseRouter = express.Router();
 

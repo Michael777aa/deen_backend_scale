@@ -177,7 +177,7 @@ export const logoutUser = CatchAsyncError(
   }
 );
 
-// valildate user role
+// Validate user role
 export const authorizeRoles = (...roles: string[]) => {
   return (
     req: Request & { user?: IUser },
@@ -187,14 +187,16 @@ export const authorizeRoles = (...roles: string[]) => {
     if (!roles.includes(req.user?.role || "")) {
       return next(
         new ErrorHandler(
-          `Role: ${req.user?.role} is not allowed to access tis resource`,
+          `Role: ${req.user?.role} is not allowed to access this resource`,
           403
         )
       );
     }
+    next(); // Always remember to call next() if the check passes
   };
 };
 
+// Update access token
 export const updateAccessToken = CatchAsyncError(
   async (
     req: Request & { user?: IUser },
@@ -203,26 +205,36 @@ export const updateAccessToken = CatchAsyncError(
   ) => {
     try {
       const refresh_token = req.cookies.refresh_token as string;
-      const decoded = jwt.verify(
-        refresh_token,
-        process.env.REFRESH_TOKEN as string
-      ) as JwtPayload;
-
-      const message = "Could not refresh token";
-      if (!decoded) {
-        return next(new ErrorHandler(message, 400));
+      if (!refresh_token) {
+        return next(new ErrorHandler("No refresh token provided", 400));
       }
 
-      const session = await redis.get(decoded.id as string);
+      // Verify the refresh token
+      let decoded: JwtPayload | null = null;
+      try {
+        decoded = jwt.verify(
+          refresh_token,
+          process.env.REFRESH_TOKEN as string
+        ) as JwtPayload;
+      } catch (error) {
+        return next(new ErrorHandler("Invalid or expired refresh token", 400));
+      }
 
+      if (!decoded) {
+        return next(new ErrorHandler("Could not refresh token", 400));
+      }
+
+      // Check if the session exists in Redis
+      const session = await redis.get(decoded.id as string);
       if (!session) {
         return next(
-          new ErrorHandler("Please login to access to this resource", 400)
+          new ErrorHandler("Please login to access this resource", 400)
         );
       }
 
       const user = JSON.parse(session);
 
+      // Generate new access and refresh tokens
       const accessToken = jwt.sign(
         { id: user._id },
         process.env.ACCESS_TOKEN as string,
@@ -239,11 +251,24 @@ export const updateAccessToken = CatchAsyncError(
         }
       );
 
-      req.user = user;
-      res.cookie("access_token", accessToken, accessTokenOptions);
-      res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+      req.user = user; // Attach user to the request
 
-      await redis.set(user._id, JSON.stringify(user), "EX", 604800); // 7 days
+      // Set new access and refresh tokens in cookies
+      res.cookie("access_token", accessToken, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 300000,
+      });
+      res.cookie("refresh_token", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 259200000,
+      });
+
+      // Update the user session in Redis (7 days expiration)
+      await redis.set(user._id, JSON.stringify(user), "EX", 604800);
+
+      // Return response with the new access token
       res.status(200).json({
         status: "success",
         accessToken,
