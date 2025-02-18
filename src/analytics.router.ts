@@ -14,19 +14,19 @@ const analyticsRouter = express.Router();
 analyticsRouter.get(
   "/get-users-analytics",
   isAuthenticated,
-  // authorizeRoles("admin"),
+  authorizeRoles("admin"),
   getUsersAnalytics
 );
 analyticsRouter.get(
   "/get-courses-analytics",
   isAuthenticated,
-  // authorizeRoles("admin"),
+  authorizeRoles("admin"),
   getCoursesAnalytics
 );
 analyticsRouter.get(
   "/get-orders-analytics",
   isAuthenticated,
-  // authorizeRoles("admin"),
+  authorizeRoles("admin"),
   getOrderAnalytics
 );
 export default analyticsRouter;

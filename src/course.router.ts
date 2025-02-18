@@ -22,7 +22,7 @@ const courseRouter = express.Router();
 courseRouter.post(
   "/create-course",
   isAuthenticated,
-  // authorizeRoles("admin"),
+  authorizeRoles("admin"),
   uploadCourse
 );
 courseRouter.post(
@@ -41,14 +41,14 @@ courseRouter.post("/add-review/:id", isAuthenticated, addReview);
 courseRouter.post(
   "/add-reply",
   isAuthenticated,
-  // authorizeRoles("admin"),
+  authorizeRoles("admin"),
   addReplyToReview
 );
 
 courseRouter.get(
   "/get-courses",
   isAuthenticated,
-  // authorizeRoles("admin"),
+  authorizeRoles("admin"),
   getAllCourses
 );
 courseRouter.post("/getVdoCipherOTP", generateVideoUrl);
@@ -56,7 +56,7 @@ courseRouter.post("/getVdoCipherOTP", generateVideoUrl);
 courseRouter.post(
   "/delete-course/:id",
   isAuthenticated,
-  // authorizeRoles("admin"),
+  authorizeRoles("admin"),
   deleteCourse
 );
 export default courseRouter;

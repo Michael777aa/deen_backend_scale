@@ -13,13 +13,13 @@ const notificationRouter = express.Router();
 notificationRouter.get(
   "/get-all-notifications",
   isAuthenticated,
-  // authorizeRoles("admin"),
+  authorizeRoles("admin"),
   getNotifications
 );
 notificationRouter.post(
   "/update-notification/:id",
   isAuthenticated,
-  // authorizeRoles("admin"),
+  authorizeRoles("admin"),
   updateNotification
 );
 export default notificationRouter;

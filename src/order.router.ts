@@ -11,7 +11,7 @@ orderRouter.post("/create-order", isAuthenticated, createOrder);
 orderRouter.get(
   "/get-orders",
   isAuthenticated,
-  // authorizeRoles("admin"),
+  authorizeRoles("admin"),
   getAllOrders
 );
 export default orderRouter;
