@@ -33,7 +33,7 @@ userRouter.get(
   authorizeRoles("admin"),
   getAllUsers
 );
-userRouter.get("/logout", isAuthenticated, authorizeRoles("admin"), logoutUser);
+userRouter.get("/logout", isAuthenticated, logoutUser);
 userRouter.get("/refresh", updateAccessToken);
 userRouter.get("/me", isAuthenticated, getUserInfo);
 userRouter.post(

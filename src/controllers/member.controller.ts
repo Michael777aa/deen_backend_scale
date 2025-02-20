@@ -326,11 +326,6 @@ export const socialAuth = CatchAsyncError(
 
 interface IUpdateUserInfo {
   name?: string;
-  email?: string;
-}
-
-interface IUpdateUserInfo {
-  name?: string;
 }
 
 export const updateUserInfo = CatchAsyncError(
@@ -508,6 +503,8 @@ export const deleteUser = CatchAsyncError(
   ) => {
     try {
       const { id } = req.body;
+      console.log("Result", req.body);
+
       const user = await memberModel.findById(id);
 
       if (!user) {
