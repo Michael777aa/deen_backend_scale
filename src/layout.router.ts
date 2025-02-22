@@ -1,6 +1,9 @@
 import express from "express";
 import { isAuthenticated } from "./libs/utils/auth";
-import { authorizeRoles } from "./controllers/member.controller";
+import {
+  authorizeRoles,
+  updateAccessToken,
+} from "./controllers/member.controller";
 import {
   createLayout,
   editLayout,
@@ -24,5 +27,5 @@ layoutRouter.post(
   authorizeRoles("admin"),
   editLayout
 );
-layoutRouter.get("/get-layout", isAuthenticated, getLayoutByType);
+layoutRouter.get("/get-layout/:type", isAuthenticated, getLayoutByType);
 export default layoutRouter;
