@@ -75,7 +75,7 @@ memberSchema.pre<IUser>("save", async function (next) {
 
 memberSchema.methods.SignAccessToken = function () {
   return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN || "", {
-    expiresIn: "5m",
+    expiresIn: "3d",
   });
 };
 

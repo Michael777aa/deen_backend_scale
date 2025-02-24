@@ -8,11 +8,7 @@ import sendMail from "../libs/utils/sendMail";
 import ErrorHandler from "../libs/Error";
 import MemberModel, { IUser } from "../schema/Member.model";
 import { CatchAsyncError } from "../libs/utils/catchAsyncErrors";
-import {
-  accessTokenOptions,
-  refreshTokenOptions,
-  sendToken,
-} from "../libs/utils/jwt";
+import { sendToken } from "../libs/utils/jwt";
 import { redis } from "../redis";
 import {
   getAllUsersService,
@@ -86,7 +82,7 @@ export const createActivationToken = (user: any): IActivationToken => {
     },
     process.env.ACTIVATION_SECRET as Secret, // Ensure ENV variable is cast as a string
     {
-      expiresIn: "5m",
+      expiresIn: "3d",
     }
   );
 
@@ -239,7 +235,7 @@ export const updateAccessToken = CatchAsyncError(
         { id: user._id },
         process.env.ACCESS_TOKEN as string,
         {
-          expiresIn: "5m",
+          expiresIn: "3d",
         }
       );
 
@@ -257,7 +253,7 @@ export const updateAccessToken = CatchAsyncError(
       res.cookie("access_token", accessToken, {
         httpOnly: true,
         secure: true,
-        maxAge: 300000,
+        maxAge: 259200000,
       });
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
