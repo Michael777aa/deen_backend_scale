@@ -262,6 +262,8 @@ export const addAnswer = CatchAsyncError(
       const newAnswer: any = {
         user: req.user,
         answer,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
       question.questionReplies.push(newAnswer);
@@ -345,6 +347,8 @@ export const addReview = CatchAsyncError(
         user: req.user,
         comment: review,
         rating,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
       course?.reviews.push(reviewData);
 
@@ -357,12 +361,13 @@ export const addReview = CatchAsyncError(
         course.ratings = avg / course.reviews.length; // one example we have 2 review one is 5 another one is 4 so math working like this = 9 /2 4.5 ratings
       }
       await course?.save();
+      await redis.set(courseId, JSON.stringify(course), "EX", 604800); // 7 day
 
-      const notification = {
+      await NotificationModel.create({
+        user: req.user?._id,
         title: "New Review Received",
         message: `${req.user?.name} has given a review in ${course?.name}`,
-      };
-      // create notification
+      });
 
       res.status(200).json({
         success: true,
@@ -414,15 +419,12 @@ export const addReplyToReview = CatchAsyncError(
       review.commentReplies?.push(replyData);
 
       await course?.save();
+      await redis.set(courseId, JSON.stringify(course), "EX", 604800); // 7 day
 
       res.status(200).json({
         success: true,
         course,
       });
-      // res.status(200).json({
-      //   success: true,
-      //   course,
-      // });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
