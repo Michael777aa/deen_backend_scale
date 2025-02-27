@@ -13,6 +13,7 @@ import orderRouter from "./order.router";
 import notificationRouter from "./notification.router";
 import analyticsRouter from "./analytics.router";
 import layoutRouter from "./layout.router";
+import { initSocketServer } from "./socketServer";
 
 //1-ENTRANCE
 const app = express();
@@ -52,18 +53,5 @@ app.all("*", (req: Request, res: Response, next: NextFunction) => {
 app.use(ErrorMiddleware);
 
 const server = http.createServer(app);
-const io = new SocketIOServer(server, {
-  cors: { origin: true, credentials: true },
-});
-
-let summaryClient = 0;
-io.on("connection", (socket) => {
-  summaryClient++;
-  console.log(`Connection & total [${summaryClient}]`);
-
-  socket.on("disconnect", () => {
-    summaryClient--;
-    console.log(`Disconnection & total [${summaryClient}]`);
-  });
-});
+initSocketServer(server);
 export default server;

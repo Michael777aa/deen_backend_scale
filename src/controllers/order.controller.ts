@@ -5,7 +5,7 @@ import ErrorHandler from "../libs/Error";
 import { CatchAsyncError } from "../libs/utils/catchAsyncErrors";
 import { IOrder } from "../schema/Order.Model";
 import MemberModel, { IUser } from "../schema/Member.model";
-import CourseModel from "../schema/Course.model";
+import CourseModel, { ICourse } from "../schema/Course.model";
 import { getAllOrdersService, newOrder } from "../services/order.service";
 import sendMail from "../libs/utils/sendMail";
 import NotificationModel from "../schema/Notification.model";
@@ -47,7 +47,7 @@ export const createOrder = CatchAsyncError(
           new ErrorHandler("You have already purchased this course", 400)
         );
       }
-      const course = await CourseModel.findById(courseId);
+      const course: ICourse | null = await CourseModel.findById(courseId);
 
       if (!course) {
         return next(new ErrorHandler("Course not found", 404));
@@ -101,7 +101,7 @@ export const createOrder = CatchAsyncError(
         message: `You have a new order from ${course?.name}`,
       });
 
-      course.purchased ? (course.purchased += 1) : course.purchased;
+      course.purchased = course.purchased + 1;
 
       await course.save();
 

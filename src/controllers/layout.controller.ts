@@ -153,8 +153,6 @@ export const editLayout = CatchAsyncError(
             new: true, // Return the updated document
           }
         );
-
-        console.log("Updated Banner Result:", result);
       }
 
       if (type === "FAQ") {
