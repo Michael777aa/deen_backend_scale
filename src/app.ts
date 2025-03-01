@@ -5,7 +5,6 @@ import morgan from "morgan";
 import { MORGAN_FORMAT } from "./libs/config";
 import cookieParser from "cookie-parser";
 import { ErrorMiddleware } from "./libs/utils/errors";
-import { Server as SocketIOServer } from "socket.io";
 import http from "http";
 import userRouter from "./router";
 import courseRouter from "./course.router";
@@ -23,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "50mb" }));
 app.use(
   cors({
-    origin: ["http://195.35.9.39:3020"],
+    origin: ["http://195.35.9.39:3009"],
     credentials: true,
   })
 );
