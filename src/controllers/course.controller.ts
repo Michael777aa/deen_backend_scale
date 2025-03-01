@@ -480,7 +480,6 @@ export const generateVideoUrl = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { videoId } = req.body;
-      console.log("VIDEO", videoId);
 
       const response = await axios.post(
         `https://dev.vdocipher.com/api/videos/${videoId}/otp`,
@@ -495,7 +494,6 @@ export const generateVideoUrl = CatchAsyncError(
           },
         }
       );
-      console.log("RESPONSE", response);
 
       res.json(response.data);
     } catch (error: any) {

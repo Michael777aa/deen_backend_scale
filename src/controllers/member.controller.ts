@@ -200,6 +200,7 @@ export const updateAccessToken = CatchAsyncError(
     next: NextFunction
   ) => {
     try {
+      // Extract the refresh token from cookies
       const refresh_token = req.cookies.refresh_token as string;
       if (!refresh_token) {
         return next(new ErrorHandler("No refresh token provided", 400));
@@ -224,18 +225,19 @@ export const updateAccessToken = CatchAsyncError(
       const session = await redis.get(decoded.id as string);
       if (!session) {
         return next(
-          new ErrorHandler("Please login to access this resource", 400)
+          new ErrorHandler("Session not found. Please login again.", 401)
         );
       }
 
+      // Parse session to get user data
       const user = JSON.parse(session);
 
-      // Generate new access and refresh tokens
+      // Generate new access and refresh tokens with proper expiration
       const accessToken = jwt.sign(
         { id: user._id },
         process.env.ACCESS_TOKEN as string,
         {
-          expiresIn: "30d",
+          expiresIn: "30m", // Access token expires in 30 minutes
         }
       );
 
@@ -243,26 +245,33 @@ export const updateAccessToken = CatchAsyncError(
         { id: user._id },
         process.env.REFRESH_TOKEN as string,
         {
-          expiresIn: "30d",
+          expiresIn: "7d", // Refresh token expires in 7 days
         }
       );
 
-      req.user = user; // Attach user to the request
+      // Attach the user to the request object (if needed for further use)
+      req.user = user;
 
-      // Set new access and refresh tokens in cookies
+      // Set new access and refresh tokens in cookies with secure flag for production
       res.cookie("access_token", accessToken, {
         httpOnly: true,
-        secure: true,
-        maxAge: 2592000000,
-      });
-      res.cookie("refresh_token", refreshToken, {
-        httpOnly: true,
-        secure: true,
-        maxAge: 2592000000,
+        secure: process.env.NODE_ENV === "production", // Secure flag only for production
+        maxAge: 30 * 60 * 1000, // Access token expires in 30 minutes
       });
 
-      // Update the user session in Redis (7 days expiration)
-      await redis.set(user._id, JSON.stringify(user), "EX", 604800);
+      res.cookie("refresh_token", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // Secure flag only for production
+        maxAge: 7 * 24 * 60 * 60 * 1000, // Refresh token expires in 7 days
+      });
+
+      // Update the user session in Redis (7-day expiration)
+      await redis.set(
+        user._id.toString(),
+        JSON.stringify(user),
+        "EX",
+        7 * 24 * 60 * 60
+      );
 
       // Return response with the new access token
       res.status(200).json({
@@ -270,11 +279,13 @@ export const updateAccessToken = CatchAsyncError(
         accessToken,
       });
     } catch (error: any) {
-      return next(new ErrorHandler(error.message, 400));
+      console.error(error); // Log error for debugging during development
+      return next(
+        new ErrorHandler(error.message || "Internal server error", 500)
+      );
     }
   }
 );
-
 export const getUserInfo = CatchAsyncError(
   async (
     req: Request & { user?: IUser },
