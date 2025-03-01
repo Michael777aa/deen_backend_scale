@@ -1,27 +1,27 @@
-// import CourseModel from "../schema/Course.model";
 import { CatchAsyncError } from "../libs/utils/catchAsyncErrors";
 import { Response } from "express";
+import CourseModel from "../schema/Course.model";
 
-// export const createCourse = CatchAsyncError(
-//   async (data: any, res: Response) => {
-//     const course = await CourseModel.create(data);
-//     console.log("RESULT", course);
+const courseModel = CourseModel;
 
-//     res.status(201).json({
-//       success: true,
-//       course,
-//     });
-//   }
-// );
+export const createCourse = CatchAsyncError(
+  async (data: any, res: Response) => {
+    const course = await courseModel.create(data);
 
-// // get all users
+    res.status(201).json({
+      success: true,
+      course,
+    });
+  }
+);
 
-// export const getAllCoursesService = async (res: Response) => {
-//   const courses = await CourseModel.find().sort({ createdAt: -1 });
-//   console.log("COURSES", courses);
+// get all users
 
-//   res.status(201).json({
-//     success: true,
-//     courses,
-//   });
-// };
+export const getAllCoursesService = async (res: Response) => {
+  const courses = await courseModel.find().sort({ createdAt: -1 });
+
+  res.status(201).json({
+    success: true,
+    courses,
+  });
+};

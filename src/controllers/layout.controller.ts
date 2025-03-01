@@ -14,7 +14,6 @@ export const createLayout = CatchAsyncError(
     try {
       const { type } = req.body;
 
-      // Check if the layout type already exists (for Banner only)
       if (type === "Banner") {
         const isTypeExist = await LayoutModel.findOne({ type });
         if (isTypeExist) {

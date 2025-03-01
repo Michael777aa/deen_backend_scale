@@ -6,7 +6,7 @@ export interface IOrder extends Document {
   payment_info: object;
 }
 
-const orderSchema = new Schema(
+const orderSchema = new Schema<IOrder>(
   {
     courseId: {
       type: String,
@@ -23,4 +23,6 @@ const orderSchema = new Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Order", orderSchema);
+const OrderModel: Model<IOrder> = mongoose.model("Order", orderSchema);
+
+export default OrderModel;
