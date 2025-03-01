@@ -82,7 +82,7 @@ export const createActivationToken = (user: any): IActivationToken => {
     },
     process.env.ACTIVATION_SECRET as Secret, // Ensure ENV variable is cast as a string
     {
-      expiresIn: "3d",
+      expiresIn: "30d",
     }
   );
 
@@ -235,7 +235,7 @@ export const updateAccessToken = CatchAsyncError(
         { id: user._id },
         process.env.ACCESS_TOKEN as string,
         {
-          expiresIn: "3d",
+          expiresIn: "30d",
         }
       );
 
@@ -243,7 +243,7 @@ export const updateAccessToken = CatchAsyncError(
         { id: user._id },
         process.env.REFRESH_TOKEN as string,
         {
-          expiresIn: "3d",
+          expiresIn: "30d",
         }
       );
 
@@ -253,12 +253,12 @@ export const updateAccessToken = CatchAsyncError(
       res.cookie("access_token", accessToken, {
         httpOnly: true,
         secure: true,
-        maxAge: 259200000,
+        maxAge: 2592000000,
       });
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
         secure: true,
-        maxAge: 259200000,
+        maxAge: 2592000000,
       });
 
       // Update the user session in Redis (7 days expiration)

@@ -75,13 +75,13 @@ memberSchema.pre<IUser>("save", async function (next) {
 
 memberSchema.methods.SignAccessToken = function () {
   return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN || "", {
-    expiresIn: "3d",
+    expiresIn: "30d",
   });
 };
 
 memberSchema.methods.SignRefreshToken = function () {
   return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN || "", {
-    expiresIn: "3d",
+    expiresIn: "30d",
   });
 };
 
