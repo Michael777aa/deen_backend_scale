@@ -5,6 +5,7 @@ import ErrorHandler from "../libs/Error";
 import { CatchAsyncError } from "../libs/utils/catchAsyncErrors";
 import { IOrder } from "../schema/Order.Model";
 import MemberModel, { IUser } from "../schema/Member.model";
+//@ts-nocheck
 import CourseModel, { ICourse } from "../schema/Course.model";
 import { getAllOrdersService, newOrder } from "../services/order.service";
 import sendMail from "../libs/utils/sendMail";

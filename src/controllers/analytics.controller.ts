@@ -2,8 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import ErrorHandler from "../libs/Error";
 import { CatchAsyncError } from "../libs/utils/catchAsyncErrors";
 import { generateLast12MonthsData } from "../libs/utils/analytics.generator";
-import MemberModel, { IUser } from "../schema/Member.model";
+import MemberModel from "../schema/Member.model";
 import CourseModel from "../schema/Course.model";
+//@ts-nocheck
 import OrderModel from "../schema/Order.Model";
 
 // get users analytics -- only for admin

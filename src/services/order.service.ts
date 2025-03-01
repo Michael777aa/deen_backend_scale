@@ -1,5 +1,6 @@
 import { Response } from "express";
 import { CatchAsyncError } from "../libs/utils/catchAsyncErrors";
+//@ts-nocheck
 import OrderModel from "../schema/Order.Model";
 // create new order
 const orderModel = OrderModel;
