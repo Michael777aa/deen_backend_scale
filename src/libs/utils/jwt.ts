@@ -10,48 +10,44 @@ interface ITokenOptions {
   secure?: boolean;
 }
 
-// Parse environment variables with fallback values
-const accessTokenExpire = parseInt(process.env.ACCESS_TOKEN_EXPIRE || "5", 10); // in minutes
-const refreshTokenExpire = parseInt(
-  process.env.REFRESH_TOKEN_EXPIRE || "7",
-  10
-); // in days
+// parse environment variables to integrate with fallback values
 
-// Define token options for access and refresh tokens
+// Set expiry to 30 days
+const accessTokenExpire = 30; // 30 days in days
+const refreshTokenExpire = 30; // 30 days in days
+
 export const accessTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + accessTokenExpire * 60 * 60 * 1000), // Convert minutes to ms
-  maxAge: accessTokenExpire * 60 * 60 * 1000, // Convert minutes to ms
+  expires: new Date(Date.now() + accessTokenExpire * 24 * 60 * 60 * 1000), // 30 days → ms
+  maxAge: accessTokenExpire * 24 * 60 * 60 * 1000, // 30 days → ms
   httpOnly: true,
   sameSite: "lax",
 };
 
 export const refreshTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000), // Convert days to ms
-  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000, // Convert days to ms
+  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000), // 30 days → ms
+  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000, // 30 days → ms
   httpOnly: true,
   sameSite: "lax",
 };
 
-// Send the tokens to the client
 export const sendToken = (user: IUser, statusCode: number, res: Response) => {
-  // Generate access and refresh tokens using user's methods
   const accessToken = user.SignAccessToken();
   const refreshToken = user.SignRefreshToken();
 
-  // Upload session data to Redis with a 7-day expiration
-  redis.set(user._id.toString(), JSON.stringify(user), "EX", 60 * 60 * 24 * 7); // Expires in 7 days
+  // upload session to redis
+  redis.set(user._id, JSON.stringify(user), "EX", 60 * 60 * 24 * 7); // Expires in 7 days (could be adjusted if necessary)
 
-  // Set the secure flag for cookies only in production environment
+  // only set secure to true in production
   if (process.env.NODE_ENV === "production") {
     accessTokenOptions.secure = true;
     refreshTokenOptions.secure = true;
   }
 
-  // Set the cookies in the response
+  // Set cookies with new expiry options
   res.cookie("access_token", accessToken, accessTokenOptions);
   res.cookie("refresh_token", refreshToken, refreshTokenOptions);
 
-  // Respond with the tokens and user data
+  // Return the response with the tokens
   res.status(statusCode).json({
     success: true,
     user,

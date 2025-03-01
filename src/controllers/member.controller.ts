@@ -138,7 +138,10 @@ export const loginUser = CatchAsyncError(
       if (!user) {
         return next(new ErrorHandler("Invalid email or password", 400));
       }
+      console.log(user);
+
       const isPasswordMatch = await user.comparePassword(password);
+
       if (!isPasswordMatch) {
         return next(new ErrorHandler("Invalid email or password", 400));
       }
@@ -160,7 +163,6 @@ export const logoutUser = CatchAsyncError(
       res.cookie("refresh_token", "", { maxAge: 1 });
 
       const userId = req.user?._id || "";
-      console.log(req.user, "REQUEST USER");
 
       redis.del(userId);
       res.status(200).json({
@@ -232,12 +234,12 @@ export const updateAccessToken = CatchAsyncError(
       // Parse session to get user data
       const user = JSON.parse(session);
 
-      // Generate new access and refresh tokens with proper expiration
+      // Generate new access and refresh tokens with proper expiration (30 days)
       const accessToken = jwt.sign(
         { id: user._id },
         process.env.ACCESS_TOKEN as string,
         {
-          expiresIn: "30m", // Access token expires in 30 minutes
+          expiresIn: "30d", // Access token expires in 30 days
         }
       );
 
@@ -245,7 +247,7 @@ export const updateAccessToken = CatchAsyncError(
         { id: user._id },
         process.env.REFRESH_TOKEN as string,
         {
-          expiresIn: "7d", // Refresh token expires in 7 days
+          expiresIn: "30d", // Refresh token expires in 30 days
         }
       );
 
@@ -256,21 +258,21 @@ export const updateAccessToken = CatchAsyncError(
       res.cookie("access_token", accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production", // Secure flag only for production
-        maxAge: 30 * 60 * 1000, // Access token expires in 30 minutes
+        maxAge: 30 * 24 * 60 * 60 * 1000, // Access token expires in 30 days
       });
 
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production", // Secure flag only for production
-        maxAge: 7 * 24 * 60 * 60 * 1000, // Refresh token expires in 7 days
+        maxAge: 30 * 24 * 60 * 60 * 1000, // Refresh token expires in 30 days
       });
 
-      // Update the user session in Redis (7-day expiration)
+      // Update the user session in Redis (30-day expiration)
       await redis.set(
         user._id.toString(),
         JSON.stringify(user),
         "EX",
-        7 * 24 * 60 * 60
+        30 * 24 * 60 * 60 // 30 days in seconds
       );
 
       // Return response with the new access token
@@ -286,6 +288,7 @@ export const updateAccessToken = CatchAsyncError(
     }
   }
 );
+
 export const getUserInfo = CatchAsyncError(
   async (
     req: Request & { user?: IUser },
@@ -306,7 +309,7 @@ export const getUserInfo = CatchAsyncError(
 interface ISocialAuthBody {
   email: string;
   name: string;
-  avatar: string;
+  avatar?: string;
 }
 export const socialAuth = CatchAsyncError(
   async (
