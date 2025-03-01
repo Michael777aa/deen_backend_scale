@@ -434,7 +434,7 @@ export const addReplyToReview = CatchAsyncError(
 //
 // get all users only afor admin
 
-export const getAllCoursess = CatchAsyncError(
+export const getAdminAllCoursess = CatchAsyncError(
   async (
     req: Request & { user?: IUser },
     res: Response,

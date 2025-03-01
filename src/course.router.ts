@@ -8,7 +8,7 @@ import {
   editCourse,
   generateVideoUrl,
   getAllCourses,
-  getAllCoursess,
+  getAdminAllCoursess,
   getCourseByUser,
   getSingleCourse,
   uploadCourse,
@@ -54,7 +54,7 @@ courseRouter.get(
   "/get-admin-courses",
   isAuthenticated,
   authorizeRoles("admin"),
-  getAllCoursess
+  getAdminAllCoursess
 );
 courseRouter.post("/getVdoCipherOTP", generateVideoUrl);
 
