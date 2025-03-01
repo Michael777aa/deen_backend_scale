@@ -1,13 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import ejs from "ejs";
-import path from "path";
 import ErrorHandler from "../libs/Error";
 import { CatchAsyncError } from "../libs/utils/catchAsyncErrors";
-import { IOrder } from "../schema/Order.Model";
-import MemberModel, { IUser } from "../schema/Member.model";
-import CourseModel from "../schema/Course.model";
-import { newOrder } from "../services/order.service";
-import sendMail from "../libs/utils/sendMail";
+import { IUser } from "../schema/Member.model";
 import NotificationModel from "../schema/Notification.model";
 import cron from "node-cron";
 // get all notifications only admin

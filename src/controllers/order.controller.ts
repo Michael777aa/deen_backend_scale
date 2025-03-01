@@ -20,7 +20,6 @@ export const createOrder = CatchAsyncError(
   ) => {
     try {
       const { courseId, payment_info } = req.body as IOrder;
-      console.log("REQ BODY", req.body);
 
       if (payment_info) {
         if ("id" in payment_info) {

@@ -8,6 +8,7 @@ import OrderModel from "../schema/Order.Model";
 
 // get users analytics -- only for admin
 const memberModel = MemberModel;
+const orderModel = OrderModel;
 
 export const getUsersAnalytics = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -44,7 +45,7 @@ export const getCoursesAnalytics = CatchAsyncError(
 export const getOrderAnalytics = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const orders = await generateLast12MonthsData(OrderModel);
+      const orders = await generateLast12MonthsData(orderModel);
 
       res.status(200).json({
         success: true,
