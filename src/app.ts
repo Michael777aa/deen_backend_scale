@@ -20,7 +20,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static("./uploads"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "50mb" }));
-app.use(cors({ origin: "http://195.35.9.39:3020" }));
+app.use(cors({ origin: "http://195.35.9.39:3020/" }));
 app.use(cookieParser());
 app.use(ErrorMiddleware);
 app.use(morgan(MORGAN_FORMAT));
