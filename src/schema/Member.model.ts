@@ -82,29 +82,40 @@ memberSchema.pre<IUser>("save", async function (next) {
 // Method to sign access token
 memberSchema.methods.SignAccessToken = function () {
   try {
+    if (!process.env.ACCESS_TOKEN_SECRET) {
+      throw new Error(
+        "ACCESS_TOKEN_SECRET is not defined in environment variables"
+      );
+    }
     return jwt.sign(
       { id: this._id, role: this.role },
-      process.env.ACCESS_TOKEN_SECRET || "",
+      process.env.ACCESS_TOKEN_SECRET,
       {
         expiresIn: "1h", // Set a short expiry time for access tokens
       }
     );
   } catch (error) {
+    console.error("Error while generating access token:", error);
     throw new Error("Error while generating access token");
   }
 };
 
-// Method to sign refresh token
 memberSchema.methods.SignRefreshToken = function () {
   try {
+    if (!process.env.REFRESH_TOKEN_SECRET) {
+      throw new Error(
+        "REFRESH_TOKEN_SECRET is not defined in environment variables"
+      );
+    }
     return jwt.sign(
       { id: this._id, role: this.role },
-      process.env.REFRESH_TOKEN_SECRET || "",
+      process.env.REFRESH_TOKEN_SECRET,
       {
         expiresIn: "30d", // Set a longer expiry time for refresh tokens
       }
     );
   } catch (error) {
+    console.error("Error while generating refresh token:", error);
     throw new Error("Error while generating refresh token");
   }
 };

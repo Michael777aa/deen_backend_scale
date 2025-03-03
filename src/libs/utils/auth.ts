@@ -3,6 +3,7 @@ import { CatchAsyncError } from "./catchAsyncErrors";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { redis } from "../../redis";
 import { IUser } from "../../schema/Member.model";
+import ErrorHandler from "../Error";
 
 // authenticated user
 export const isAuthenticated = CatchAsyncError(
@@ -13,15 +14,26 @@ export const isAuthenticated = CatchAsyncError(
   ) => {
     const access_token = req.cookies.access_token;
 
-    const decoded = jwt.verify(
-      access_token,
-      process.env.ACCESS_TOKEN as string
-    ) as JwtPayload;
+    if (!access_token) {
+      return next(new ErrorHandler("No access token found", 401));
+    }
 
-    const user: any = await redis.get(decoded.id);
+    try {
+      const decoded = jwt.verify(
+        access_token,
+        process.env.ACCESS_TOKEN_SECRET as string
+      ) as JwtPayload;
 
-    req.user = JSON.parse(user); // ✅ Now TypeScript should recognize `req.user`
+      const user = await redis.get(decoded.id);
 
-    next();
+      if (!user) {
+        return next(new ErrorHandler("User not found", 401));
+      }
+
+      req.user = JSON.parse(user); // Attach user to request object
+      next();
+    } catch (error) {
+      return next(new ErrorHandler("Invalid or expired token", 401));
+    }
   }
 );
