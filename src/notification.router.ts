@@ -1,6 +1,9 @@
 import express from "express";
 import { isAuthenticated } from "./libs/utils/auth";
-import { authorizeRoles } from "./controllers/member.controller";
+import {
+  authorizeRoles,
+  updateAccessToken,
+} from "./controllers/member.controller";
 import {
   getNotifications,
   updateNotification,
@@ -18,6 +21,7 @@ notificationRouter.get(
 );
 notificationRouter.post(
   "/update-notification/:id",
+  updateAccessToken,
   isAuthenticated,
   authorizeRoles("admin"),
   updateNotification

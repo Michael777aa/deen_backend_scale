@@ -36,7 +36,7 @@ export const createOrder = CatchAsyncError(
         }
       }
 
-      const user = await MemberModel.findById(req.user?._id);
+      const user: any = await MemberModel.findById(req.user?._id);
 
       const courseExistInUser = user?.courses.some(
         (course: any) => course._id.toString() === courseId

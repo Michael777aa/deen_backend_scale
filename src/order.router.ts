@@ -1,6 +1,9 @@
 import express from "express";
 import { isAuthenticated } from "./libs/utils/auth";
-import { authorizeRoles } from "./controllers/member.controller";
+import {
+  authorizeRoles,
+  updateAccessToken,
+} from "./controllers/member.controller";
 import {
   createOrder,
   getAllOrders,
@@ -12,7 +15,12 @@ const orderRouter = express.Router();
 
 /** Course **/
 
-orderRouter.post("/create-order", isAuthenticated, createOrder);
+orderRouter.post(
+  "/create-order",
+  updateAccessToken,
+  isAuthenticated,
+  createOrder
+);
 orderRouter.get(
   "/get-orders",
   isAuthenticated,

@@ -1,7 +1,7 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-// Schema first & Code
+
 const emailRegexPattern: RegExp =
   /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -20,7 +20,8 @@ export interface IUser extends Document {
   SignAccessToken: () => string;
   SignRefreshToken: () => string;
 }
-const memberSchema = new Schema(
+
+const memberSchema = new Schema<IUser>(
   {
     name: {
       type: String,
@@ -34,7 +35,7 @@ const memberSchema = new Schema(
         validator: function (value: string) {
           return emailRegexPattern.test(value);
         },
-        message: "please enter a valid email",
+        message: "Please enter a valid email",
       },
       unique: true,
     },
@@ -44,18 +45,22 @@ const memberSchema = new Schema(
       minlength: [6, "Password must be at least 6 characters"],
       select: false,
     },
+
     avatar: {
       public_id: String,
       url: String,
     },
+
     role: {
       type: String,
       default: "user",
     },
+
     isVerified: {
       type: Boolean,
       default: false,
     },
+
     courses: [
       {
         courseId: String,
@@ -65,6 +70,7 @@ const memberSchema = new Schema(
   { timestamps: true } // createdAt, updateAt
 );
 
+// Hash the password before saving the user
 memberSchema.pre<IUser>("save", async function (next) {
   if (!this.isModified("password")) {
     next();
@@ -73,22 +79,42 @@ memberSchema.pre<IUser>("save", async function (next) {
   next();
 });
 
+// Method to sign access token
 memberSchema.methods.SignAccessToken = function () {
-  return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN || "", {
-    expiresIn: "30d",
-  });
+  try {
+    return jwt.sign(
+      { id: this._id, role: this.role },
+      process.env.ACCESS_TOKEN_SECRET || "",
+      {
+        expiresIn: "1h", // Set a short expiry time for access tokens
+      }
+    );
+  } catch (error) {
+    throw new Error("Error while generating access token");
+  }
 };
 
+// Method to sign refresh token
 memberSchema.methods.SignRefreshToken = function () {
-  return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN || "", {
-    expiresIn: "30d",
-  });
+  try {
+    return jwt.sign(
+      { id: this._id, role: this.role },
+      process.env.REFRESH_TOKEN_SECRET || "",
+      {
+        expiresIn: "30d", // Set a longer expiry time for refresh tokens
+      }
+    );
+  } catch (error) {
+    throw new Error("Error while generating refresh token");
+  }
 };
 
+// Method to compare password with hashed password
 memberSchema.methods.comparePassword = async function (
   enteredPassword: string
 ): Promise<boolean> {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-export default mongoose.model("member", memberSchema);
+const MembeModel: Model<IUser> = mongoose.model("member", memberSchema);
+export default MembeModel;

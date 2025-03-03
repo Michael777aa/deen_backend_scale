@@ -17,10 +17,16 @@ import { initSocketServer } from "./socketServer";
 //1-ENTRANCE
 const app = express();
 app.use(express.static(path.join(__dirname, "public")));
-app.use("/uploads", express.static("./uploads"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "50mb" }));
-app.use(cors({ origin: "http://195.35.9.39:3020/" }));
+
+app.use(
+  cors({
+    origin: process.env.ORIGIN, // Adjust this to your frontend's URL
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 app.use(ErrorMiddleware);
 app.use(morgan(MORGAN_FORMAT));

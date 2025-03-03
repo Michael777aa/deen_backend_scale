@@ -6,7 +6,6 @@ import ejs from "ejs";
 import path from "path";
 import sendMail from "../libs/utils/sendMail";
 import ErrorHandler from "../libs/Error";
-import MemberModel, { IUser } from "../schema/Member.model";
 import { CatchAsyncError } from "../libs/utils/catchAsyncErrors";
 import { sendToken } from "../libs/utils/jwt";
 import { redis } from "../redis";
@@ -16,7 +15,7 @@ import {
   updateUserRoleService,
 } from "../services/user.service";
 import cloudinary from "cloudinary";
-const memberModel = MemberModel;
+import MembeModel, { IUser } from "../schema/Member.model";
 const memberController: T = {};
 
 interface IRegistrationBody {
@@ -29,7 +28,7 @@ export const registrationUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, email, password } = req.body;
-      const isEmailExist = await memberModel.findOne({ email });
+      const isEmailExist = await MembeModel.findOne({ email });
 
       if (isEmailExist) {
         return next(new ErrorHandler("Email already exists", 400)); // Throw error instead of next()
@@ -108,11 +107,11 @@ export const activateUser = CatchAsyncError(
         return next(new ErrorHandler("Email already exist", 400));
       }
       const { name, email, password } = newUser.user;
-      const existUser = await memberModel.findOne({ email });
+      const existUser = await MembeModel.findOne({ email });
       if (existUser) {
         return next(new ErrorHandler("Email already exists", 400)); // Throw error instead of next()
       }
-      await memberModel.create({ name, email, password });
+      await MembeModel.create({ name, email, password });
 
       res.status(201).json({ success: true });
     } catch (error: any) {
@@ -133,7 +132,7 @@ export const loginUser = CatchAsyncError(
       if (!email || !password) {
         return next(new ErrorHandler("Please enter email and password", 400));
       }
-      const user = await memberModel.findOne({ email }).select("password");
+      const user = await MembeModel.findOne({ email }).select("password");
 
       if (!user) {
         return next(new ErrorHandler("Invalid email or password", 400));
@@ -202,13 +201,11 @@ export const updateAccessToken = CatchAsyncError(
     next: NextFunction
   ) => {
     try {
-      // Extract the refresh token from cookies
       const refresh_token = req.cookies.refresh_token as string;
       if (!refresh_token) {
         return next(new ErrorHandler("No refresh token provided", 400));
       }
 
-      // Verify the refresh token
       let decoded: JwtPayload | null = null;
       try {
         decoded = jwt.verify(
@@ -223,7 +220,6 @@ export const updateAccessToken = CatchAsyncError(
         return next(new ErrorHandler("Could not refresh token", 400));
       }
 
-      // Check if the session exists in Redis
       const session = await redis.get(decoded.id as string);
       if (!session) {
         return next(
@@ -231,15 +227,13 @@ export const updateAccessToken = CatchAsyncError(
         );
       }
 
-      // Parse session to get user data
       const user = JSON.parse(session);
 
-      // Generate new access and refresh tokens with proper expiration
       const accessToken = jwt.sign(
         { id: user._id },
         process.env.ACCESS_TOKEN as string,
         {
-          expiresIn: "30m", // Access token expires in 30 minutes
+          expiresIn: "30m",
         }
       );
 
@@ -247,27 +241,24 @@ export const updateAccessToken = CatchAsyncError(
         { id: user._id },
         process.env.REFRESH_TOKEN as string,
         {
-          expiresIn: "7d", // Refresh token expires in 7 days
+          expiresIn: "7d",
         }
       );
 
-      // Attach the user to the request object (if needed for further use)
       req.user = user;
 
-      // Set new access and refresh tokens in cookies with secure flag for production
       res.cookie("access_token", accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Secure flag only for production
-        maxAge: 30 * 60 * 1000, // Access token expires in 30 minutes
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 30 * 60 * 1000,
       });
 
       res.cookie("refresh_token", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Secure flag only for production
-        maxAge: 7 * 24 * 60 * 60 * 1000, // Refresh token expires in 7 days
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      // Update the user session in Redis (7-day expiration)
       await redis.set(
         user._id.toString(),
         JSON.stringify(user),
@@ -275,19 +266,17 @@ export const updateAccessToken = CatchAsyncError(
         7 * 24 * 60 * 60
       );
 
-      // Return response with the new access token
-      res.status(200).json({
-        status: "success",
-        accessToken,
-      });
+      // Instead of sending the response here, call next to continue with the next middleware
+      next();
     } catch (error: any) {
-      console.error(error); // Log error for debugging during development
+      console.error(error);
       return next(
         new ErrorHandler(error.message || "Internal server error", 500)
       );
     }
   }
 );
+
 export const getUserInfo = CatchAsyncError(
   async (
     req: Request & { user?: IUser },
@@ -318,9 +307,9 @@ export const socialAuth = CatchAsyncError(
   ) => {
     try {
       const { email, name, avatar } = req.body as ISocialAuthBody;
-      const user = await memberModel.findOne({ email });
+      const user = await MembeModel.findOne({ email });
       if (!user) {
-        const newUser = await memberModel.create({ email, name, avatar });
+        const newUser = await MembeModel.create({ email, name, avatar });
         sendToken(newUser, 200, res);
       } else {
         sendToken(user, 200, res);
@@ -345,13 +334,15 @@ export const updateUserInfo = CatchAsyncError(
   ) => {
     try {
       const { name } = req.body as IUpdateUserInfo;
+
       const userId = req.user?._id;
 
       if (!userId) {
         return next(new ErrorHandler("User not authenticated", 401)); // ✅ Ensure user is logged in
       }
 
-      const user = await memberModel.findById(userId);
+      const user: any = await MembeModel.findById(userId);
+      console.log("fetched data", user);
 
       if (name && user) {
         user.name = name;
@@ -389,18 +380,28 @@ export const updatePassword = CatchAsyncError(
       if (!oldPassword || !newPassword) {
         return next(new ErrorHandler("Please enter old and new password", 400));
       }
-      const user = await memberModel
-        .findById(req.user?._id)
-        .select("+password");
 
-      const isPasswordMatch = await user?.comparePassword(oldPassword);
+      // Check if user exists
+      if (!req.user || !req.user._id) {
+        return next(new ErrorHandler("User not found", 404));
+      }
+
+      const user = await MembeModel.findById(req.user._id).select("+password");
+
+      if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+      }
+
+      const isPasswordMatch = await user.comparePassword(oldPassword);
       if (!isPasswordMatch) {
         return next(new ErrorHandler("Invalid old password", 400));
       }
+
       user.password = newPassword;
       await user.save();
 
-      await redis.set(req.user?._id, JSON.stringify(user));
+      // Update the user data in Redis cache
+      await redis.set(req.user._id, JSON.stringify(user));
 
       res.status(201).json({
         success: true,
@@ -431,7 +432,7 @@ export const updateProfilePicture = CatchAsyncError(
         return next(new ErrorHandler("User not authenticated", 401)); // ✅ Ensures user is logged in
       }
 
-      const user = await memberModel.findById(userId);
+      const user = await MembeModel.findById(userId);
       if (!user) {
         return next(new ErrorHandler("User not found", 404)); // ✅ Ensures user exists
       }
@@ -514,7 +515,7 @@ export const deleteUser = CatchAsyncError(
       const { id } = req.body;
       console.log("Result", req.body);
 
-      const user = await memberModel.findById(id);
+      const user = await MembeModel.findById(id);
 
       if (!user) {
         return next(new ErrorHandler("User not found", 404));
