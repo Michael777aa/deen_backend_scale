@@ -1,7 +1,7 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
+// Schema first & Code
 const emailRegexPattern: RegExp =
   /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -20,8 +20,7 @@ export interface IUser extends Document {
   SignAccessToken: () => string;
   SignRefreshToken: () => string;
 }
-
-const memberSchema = new Schema<IUser>(
+const memberSchema = new Schema(
   {
     name: {
       type: String,
@@ -35,7 +34,7 @@ const memberSchema = new Schema<IUser>(
         validator: function (value: string) {
           return emailRegexPattern.test(value);
         },
-        message: "Please enter a valid email",
+        message: "please enter a valid email",
       },
       unique: true,
     },
@@ -45,22 +44,18 @@ const memberSchema = new Schema<IUser>(
       minlength: [6, "Password must be at least 6 characters"],
       select: false,
     },
-
     avatar: {
       public_id: String,
       url: String,
     },
-
     role: {
       type: String,
       default: "user",
     },
-
     isVerified: {
       type: Boolean,
       default: false,
     },
-
     courses: [
       {
         courseId: String,
@@ -70,7 +65,6 @@ const memberSchema = new Schema<IUser>(
   { timestamps: true } // createdAt, updateAt
 );
 
-// Hash the password before saving the user
 memberSchema.pre<IUser>("save", async function (next) {
   if (!this.isModified("password")) {
     next();
@@ -79,53 +73,22 @@ memberSchema.pre<IUser>("save", async function (next) {
   next();
 });
 
-// Method to sign access token
 memberSchema.methods.SignAccessToken = function () {
-  try {
-    if (!process.env.ACCESS_TOKEN_SECRET) {
-      throw new Error(
-        "ACCESS_TOKEN_SECRET is not defined in environment variables"
-      );
-    }
-    return jwt.sign(
-      { id: this._id, role: this.role },
-      process.env.ACCESS_TOKEN_SECRET,
-      {
-        expiresIn: "1h", // Set a short expiry time for access tokens
-      }
-    );
-  } catch (error) {
-    console.error("Error while generating access token:", error);
-    throw new Error("Error while generating access token");
-  }
+  return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN || "", {
+    expiresIn: "30d",
+  });
 };
 
 memberSchema.methods.SignRefreshToken = function () {
-  try {
-    if (!process.env.REFRESH_TOKEN_SECRET) {
-      throw new Error(
-        "REFRESH_TOKEN_SECRET is not defined in environment variables"
-      );
-    }
-    return jwt.sign(
-      { id: this._id, role: this.role },
-      process.env.REFRESH_TOKEN_SECRET,
-      {
-        expiresIn: "30d", // Set a longer expiry time for refresh tokens
-      }
-    );
-  } catch (error) {
-    console.error("Error while generating refresh token:", error);
-    throw new Error("Error while generating refresh token");
-  }
+  return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN || "", {
+    expiresIn: "30d",
+  });
 };
 
-// Method to compare password with hashed password
 memberSchema.methods.comparePassword = async function (
   enteredPassword: string
 ): Promise<boolean> {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-const MembeModel: Model<IUser> = mongoose.model("member", memberSchema);
-export default MembeModel;
+export default mongoose.model("member", memberSchema);
