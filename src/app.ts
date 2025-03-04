@@ -2,8 +2,11 @@ import cors from "cors";
 import express, { NextFunction, Response, Request } from "express";
 import path from "path";
 import morgan from "morgan";
-import { MORGAN_FORMAT } from "./libs/config";
 import cookieParser from "cookie-parser";
+import dotenv from "dotenv"; // Import dotenv
+
+dotenv.config(); // Load environment variables
+
 import { ErrorMiddleware } from "./libs/utils/errors";
 import http from "http";
 import userRouter from "./router";
@@ -22,15 +25,14 @@ app.use(express.json({ limit: "50mb" }));
 
 app.use(
   cors({
-    origin: process.env.ORIGIN, // Adjust this to your frontend's URL
-    methods: ["GET", "POST"],
-    credentials: true,
+    origin: process.env.ORIGIN || "http://195.35.9.39:3020", // Default to localhost if undefined
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Ensure all methods are allowed
+    credentials: true, // Allow credentials (cookies, authorization headers)
   })
 );
+
 app.use(cookieParser());
 app.use(ErrorMiddleware);
-app.use(morgan(MORGAN_FORMAT));
-
 app.set("views", path.join(__dirname, "mails"));
 app.set("view engine", "ejs");
 
@@ -45,7 +47,6 @@ app.use("/layout", layoutRouter);
 
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   const err: any = new Error(`Route ${req.originalUrl} not found`);
-
   err.statusCode = 404;
   next(err);
 });

@@ -13,7 +13,7 @@ cloudinary.config({
 });
 mongoose
   .connect(process.env.MONGO_URL as string, {})
-  .then((data) => {
+  .then(() => {
     console.log("MongoDB connection succeed");
     const PORT = process.env.PORT ?? 3000;
     server.listen(PORT, function () {

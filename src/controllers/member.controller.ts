@@ -1,4 +1,3 @@
-require("dotenv").config();
 import { T } from "../libs/types/common";
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
@@ -42,7 +41,7 @@ export const registrationUser = CatchAsyncError(
 
       const activationCode = activationToken.activationCode;
       const data = { user: { name: user.name }, activationCode };
-      const html = await ejs.renderFile(
+      await ejs.renderFile(
         path.join(__dirname, "../libs/mails/activation-mail.ejs"),
         data
       );

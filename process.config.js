@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "LMS",
+      name: "LearnEra",
       cwd: "./",
       script: "./dist/server.js",
       watch: false,

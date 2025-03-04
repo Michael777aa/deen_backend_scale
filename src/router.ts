@@ -38,12 +38,14 @@ userRouter.get("/refresh", updateAccessToken);
 userRouter.get("/me", isAuthenticated, getUserInfo);
 userRouter.post(
   "/update-user",
+  updateAccessToken,
   isAuthenticated,
   authorizeRoles("admin"),
   updateUserRole
 );
 userRouter.post(
   "/delete-user",
+  updateAccessToken,
   isAuthenticated,
   authorizeRoles("admin"),
   deleteUser
