@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  activateUser,
   authorizeRoles,
   getUserInfo,
   loginUser,
@@ -21,7 +20,6 @@ const userRouter = express.Router();
 
 /** Member **/
 userRouter.post("/registration", registrationUser);
-userRouter.post("/activate-user", activateUser);
 userRouter.post("/login", loginUser);
 userRouter.post("/social-auth", socialAuth);
 userRouter.post("/update-user-info", isAuthenticated, updateUserInfo);

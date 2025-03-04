@@ -37,79 +37,7 @@ export const registrationUser = CatchAsyncError(
         email,
         password,
       };
-      const activationToken = createActivationToken(user);
 
-      const activationCode = activationToken.activationCode;
-      const data = { user: { name: user.name }, activationCode };
-      await ejs.renderFile(
-        path.join(__dirname, "../libs/mails/activation-mail.ejs"),
-        data
-      );
-
-      try {
-        await sendMail({
-          email: user.email,
-          subject: "Activate you account",
-          template: "activation-mail.ejs",
-          data,
-        });
-        res.status(201).json({
-          success: true,
-          message: `Please check your email: ${user.email} to activate your account`,
-          activationToken: activationToken.token,
-        });
-      } catch (error: any) {
-        return next(new ErrorHandler(error.message, 400));
-      }
-    } catch (error: any) {
-      return next(new ErrorHandler(error.message, 400));
-    }
-  }
-);
-
-interface IActivationToken {
-  token: string;
-  activationCode: string;
-}
-export const createActivationToken = (user: any): IActivationToken => {
-  const activationCode = Math.floor(1000 + Math.random() * 9000).toString(); // Generates a 4-digit code
-  const token = jwt.sign(
-    {
-      user,
-      activationCode,
-    },
-    process.env.ACTIVATION_SECRET as Secret, // Ensure ENV variable is cast as a string
-    {
-      expiresIn: "30d",
-    }
-  );
-
-  return { token, activationCode }; // ✅ Return the required IActivationToken object
-};
-
-interface IActivationRequest {
-  activation_token: string;
-  activation_code: string;
-}
-
-export const activateUser = CatchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { activation_token, activation_code } =
-        req.body as IActivationRequest;
-
-      const newUser: { user: IUser; activationCode: string } = jwt.verify(
-        activation_token,
-        process.env.ACTIVATION_SECRET as string
-      ) as { user: IUser; activationCode: string };
-      if (newUser.activationCode !== activation_code) {
-        return next(new ErrorHandler("Email already exist", 400));
-      }
-      const { name, email, password } = newUser.user;
-      const existUser = await MembeModel.findOne({ email });
-      if (existUser) {
-        return next(new ErrorHandler("Email already exists", 400)); // Throw error instead of next()
-      }
       await MembeModel.create({ name, email, password });
 
       res.status(201).json({ success: true });
@@ -119,6 +47,24 @@ export const activateUser = CatchAsyncError(
   }
 );
 
+interface IActivationToken {
+  token: string;
+}
+export const createActivationToken = (user: any): IActivationToken => {
+  // Generates a 4-digit code
+  const token = jwt.sign(
+    {
+      user,
+    },
+    process.env.ACTIVATION_SECRET as Secret, // Ensure ENV variable is cast as a string
+    {
+      expiresIn: "30d",
+    }
+  );
+
+  return { token }; // ✅ Return the required IActivationToken object
+};
+
 interface ILoginRequest {
   email: string;
   password: string;
@@ -127,25 +73,38 @@ interface ILoginRequest {
 export const loginUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, password } = req.body as ILoginRequest;
+      const { email, password } = req.body;
+
+      // Validate if email and password are provided
       if (!email || !password) {
         return next(new ErrorHandler("Please enter email and password", 400));
       }
+
+      // Find user by email
       const user = await MembeModel.findOne({ email }).select("password");
 
       if (!user) {
         return next(new ErrorHandler("Invalid email or password", 400));
       }
 
+      // Compare the password
       const isPasswordMatch = await user.comparePassword(password);
 
       if (!isPasswordMatch) {
         return next(new ErrorHandler("Invalid email or password", 400));
       }
 
-      sendToken(user, 200, res); // Calling sendToken here to send the JWTs
+      // Send the token (ensure sendToken is implemented properly)
+      sendToken(user, 200, res);
+
+      // Respond with success, token, and user info
+      res.status(200).json({
+        success: true,
+        accessToken: user.SignAccessToken(),
+        user,
+      });
     } catch (error: any) {
-      return next(new ErrorHandler(error.message, 400));
+      return next(new ErrorHandler(error.message, 500)); // Change to 500 if it's a server-side error
     }
   }
 );

@@ -36,23 +36,24 @@ export const sendToken = (user: IUser, statusCode: number, res: Response) => {
     const accessToken = user.SignAccessToken();
     const refreshToken = user.SignRefreshToken();
 
-    // Upload session to Redis with 7 days expiry
-    redis.set(
-      user._id.toString(),
-      JSON.stringify(user),
-      "EX",
-      60 * 60 * 24 * 7
-    ); // Ensure `_id` is a string
+    // 🔹 Store user ID in Redis instead of full user object
+    redis.set(user._id.toString(), refreshToken, "EX", 60 * 60 * 24 * 7); // 7 days expiry
 
-    // Only set `secure` in production
+    // 🔹 Clone access token options to avoid modifying the global variable
+    const accessOptions: ITokenOptions = { ...accessTokenOptions };
+    const refreshOptions: ITokenOptions = { ...refreshTokenOptions };
+
+    // 🔹 Ensure secure cookies in production
     if (process.env.NODE_ENV === "production") {
-      accessTokenOptions.secure = true;
+      accessOptions.secure = true;
+      refreshOptions.secure = true;
     }
 
-    // Set cookies
-    res.cookie("access_token", accessToken, accessTokenOptions);
-    res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+    // 🔹 Set cookies
+    res.cookie("access_token", accessToken, accessOptions);
+    res.cookie("refresh_token", refreshToken, refreshOptions);
 
+    // 🔹 Send response
     res.status(statusCode).json({
       success: true,
       user,
