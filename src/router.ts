@@ -25,28 +25,11 @@ userRouter.post("/social-auth", socialAuth);
 userRouter.post("/update-user-info", isAuthenticated, updateUserInfo);
 userRouter.post("/update-user-password", isAuthenticated, updatePassword);
 userRouter.post("/update-user-avatar", isAuthenticated, updateProfilePicture);
-userRouter.get(
-  "/get-users",
-  isAuthenticated,
-  authorizeRoles("admin"),
-  getAllUsers
-);
-userRouter.get("/logout", isAuthenticated, logoutUser);
+userRouter.get("/get-users", getAllUsers);
+userRouter.get("/logout", logoutUser);
 userRouter.get("/refresh", updateAccessToken);
 userRouter.get("/me", isAuthenticated, getUserInfo);
-userRouter.post(
-  "/update-user",
-  updateAccessToken,
-  isAuthenticated,
-  authorizeRoles("admin"),
-  updateUserRole
-);
-userRouter.post(
-  "/delete-user",
-  updateAccessToken,
-  isAuthenticated,
-  authorizeRoles("admin"),
-  deleteUser
-);
+userRouter.post("/update-user", updateAccessToken, updateUserRole);
+userRouter.post("/delete-user", updateAccessToken, deleteUser);
 
 export default userRouter;

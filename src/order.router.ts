@@ -15,19 +15,9 @@ const orderRouter = express.Router();
 
 /** Course **/
 
-orderRouter.post(
-  "/create-order",
-  updateAccessToken,
-  isAuthenticated,
-  createOrder
-);
-orderRouter.get(
-  "/get-orders",
-  isAuthenticated,
-  authorizeRoles("admin"),
-  getAllOrders
-);
+orderRouter.post("/create-order", createOrder);
+orderRouter.get("/get-orders", getAllOrders);
 
 orderRouter.get("/payment/stripepublishablekey", sendStripePublishableKey);
-orderRouter.post("/payment", isAuthenticated, newPayment);
+orderRouter.post("/payment", newPayment);
 export default orderRouter;

@@ -27,47 +27,24 @@ const courseRouter = express.Router();
 courseRouter.post(
   "/create-course",
   updateAccessToken, // Add to refresh the access token if expired
-  isAuthenticated,
-  authorizeRoles("admin"),
   uploadCourse
 );
 
-courseRouter.post(
-  "/edit-course/:id",
-  updateAccessToken,
-  isAuthenticated,
-  authorizeRoles("admin"),
-  editCourse
-);
+courseRouter.post("/edit-course/:id", updateAccessToken, editCourse);
 
 courseRouter.get("/get-course/:id", getSingleCourse); // No need for updateAccessToken here
 courseRouter.get("/get-courses", getAllCourses); // No need for updateAccessToken here
 courseRouter.get("/get-course-content/:id", isAuthenticated, getCourseByUser);
 
-courseRouter.post("/add-question", isAuthenticated, addQuestion);
-courseRouter.post("/add-answer", isAuthenticated, addAnswer);
-courseRouter.post("/add-review/:id", isAuthenticated, addReview);
-courseRouter.post(
-  "/add-reply",
-  isAuthenticated,
-  authorizeRoles("admin"),
-  addReplyToReview
-);
+courseRouter.post("/add-question", addQuestion);
+courseRouter.post("/add-answer", addAnswer);
+courseRouter.post("/add-review/:id", addReview);
+courseRouter.post("/add-reply", addReplyToReview);
 
-courseRouter.get(
-  "/get-admin-courses",
-  isAuthenticated,
-  authorizeRoles("admin"),
-  getAdminAllCoursess
-);
+courseRouter.get("/get-admin-courses", getAdminAllCoursess);
 
 courseRouter.post("/getVdoCipherOTP", generateVideoUrl);
 
-courseRouter.post(
-  "/delete-course/:id",
-  isAuthenticated,
-  authorizeRoles("admin"),
-  deleteCourse
-);
+courseRouter.post("/delete-course/:id", deleteCourse);
 
 export default courseRouter;

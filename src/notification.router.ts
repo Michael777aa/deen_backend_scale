@@ -13,17 +13,6 @@ const notificationRouter = express.Router();
 
 /** Course **/
 
-notificationRouter.get(
-  "/get-all-notifications",
-  isAuthenticated,
-  authorizeRoles("admin"),
-  getNotifications
-);
-notificationRouter.post(
-  "/update-notification/:id",
-  updateAccessToken,
-  isAuthenticated,
-  authorizeRoles("admin"),
-  updateNotification
-);
+notificationRouter.get("/get-all-notifications", getNotifications);
+notificationRouter.post("/update-notification/:id", updateNotification);
 export default notificationRouter;
