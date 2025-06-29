@@ -1,58 +1,41 @@
-import cors from "cors";
-import express, { NextFunction, Response, Request } from "express";
+import express from "express";
 import path from "path";
+import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import dotenv from "dotenv"; // Import dotenv
-
-dotenv.config(); // Load environment variables
-
-import { ErrorMiddleware } from "./libs/utils/errors";
-import http from "http";
-import userRouter from "./router";
-import courseRouter from "./course.router";
-import orderRouter from "./order.router";
-import notificationRouter from "./notification.router";
-import analyticsRouter from "./analytics.router";
-import layoutRouter from "./layout.router";
-import { initSocketServer } from "./socketServer";
+import { limiter, MORGAN_FORMAT } from "./libs/config";
+import authRouter from "./routes/authRouter";
+import layoutRouter from "./routes/layoutRouter";
+import helmet from "helmet";
+import prayerRouter from "./routes/prayerRouter";
+import qiblaRouter from "./routes/qiblaRouter";
+import calendarRouter from "./routes/calendarRouter";
+import contentRouter from "./routes/contentRouter";
+import mosqueRouter from "./routes/mosqueRouter";
+import inspirationRouter from "./routes/inspiration.router";
+import streamRouter from "./routes/streamRouter";
 
 //1-ENTRANCE
 const app = express();
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json({ limit: "50mb" }));
-
-app.use(
-  cors({
-    origin: "http://195.35.9.39:3020", // Default to localhost if undefined
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Ensure all methods are allowed
-    credentials: true, // Allow credentials (cookies, authorization headers)
-  })
-);
-
+app.use("/uploads", express.static("./uploads"));
+app.use(express.json());
 app.use(cookieParser());
-app.use(ErrorMiddleware);
-app.set("views", path.join(__dirname, "mails"));
-app.set("view engine", "ejs");
+app.use(cors({ credentials: true, origin: true }));
+app.use(morgan(MORGAN_FORMAT));
+app.use(helmet());
+app.use(limiter);
 
 // 4-ROUTERS
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/layout", layoutRouter);
+app.use("/api/v1/prayer", prayerRouter);
+app.use("/api/v1/qibla", qiblaRouter);
+app.use("/api/v1/inspiration", inspirationRouter);
+app.use("/api/v1", streamRouter);
+app.use("/api/v1", calendarRouter);
+app.use("/api/v1", contentRouter);
+app.use("/api/v1", mosqueRouter);
 
-app.use("/user", userRouter);
-app.use("/course", courseRouter);
-app.use("/order", orderRouter);
-app.use("/notification", notificationRouter);
-app.use("/analyze", analyticsRouter);
-app.use("/layout", layoutRouter);
-
-app.all("*", (req: Request, res: Response, next: NextFunction) => {
-  const err: any = new Error(`Route ${req.originalUrl} not found`);
-  err.statusCode = 404;
-  next(err);
-});
-
-app.use(ErrorMiddleware);
-
-const server = http.createServer(app);
-initSocketServer(server);
-export default server;
+export default app;

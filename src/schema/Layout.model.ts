@@ -1,56 +1,34 @@
-import mongoose, { Schema, Document, model } from "mongoose";
-import { IUser } from "./Member.model";
+import mongoose, { Schema } from "mongoose";
 
-interface FaqItem extends Document {
-  question: string;
-  answer: string;
-}
-
-interface Category extends Document {
-  title: string;
-}
-
-interface BannerImage extends Document {
-  public_id: string;
-  url: string;
-}
-
-interface Layout extends Document {
-  type: string;
-  faq: FaqItem[];
-  categories: Category[];
-  banner: {
-    image: BannerImage;
-    title: string;
-    subTitle: string;
-  };
-}
-
-const faqSchema = new Schema<FaqItem>({
-  question: { type: String },
-  answer: { type: String },
-});
-
-const categorySchema = new Schema<Category>({
-  title: { type: String },
-});
-
-const bannerImageSchema = new Schema<BannerImage>({
-  public_id: { type: String },
-  url: { type: String },
-});
-
-const layoutSchema = new Schema<Layout>({
-  type: { type: String },
-  faq: { faqSchema },
-  categories: [categorySchema],
-  banner: {
-    image: bannerImageSchema,
-    title: { type: String },
-    subTitle: { type: String },
+// Schema
+const layoutSchema = new Schema(
+  {
+    layoutImages: {
+      type: [String],
+      required: true,
+      default: [],
+    },
+    greeting: {
+      type: String,
+      default: "Good Morning",
+    },
+    username: {
+      type: String,
+      default: "Demo User",
+    },
+    blessing: {
+      type: String,
+      default: "May Allah bless your day",
+    },
+    showBlessing: {
+      type: Boolean,
+      default: true,
+    },
   },
-});
 
-const LayoutModel = model<Layout>("Layout", layoutSchema);
+  { timestamps: true }
+);
 
-export default LayoutModel;
+layoutSchema.index({}, { unique: true });
+
+export default mongoose.model("layout", layoutSchema);

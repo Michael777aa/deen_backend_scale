@@ -1,7 +1,7 @@
 {
-  "name": "LearnEra",
+  "name": "deen_daily",
   "version": "1.0.0",
-  "description": "This is lms project backend",
+  "description": "This is deen_daily backend",
   "main": "src/server.ts",
   "scripts": {
     "start": " ts-node src/server.ts",
@@ -14,6 +14,7 @@
   "author": "MIT",
   "license": "ISC",
   "dependencies": {
+    "@mux/mux-node": "^11.1.0",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
@@ -25,9 +26,13 @@
     "dotenv": "^16.0.0",
     "ejs": "^3.1.6",
     "express": "^4.21.2",
+    "express-rate-limit": "^7.5.1",
     "express-session": "^1.17.3",
     "fs-extra": "^11.1.1",
+    "helmet": "^8.1.0",
+    "http-status": "^2.1.0",
     "ioredis": "5.3.2",
+    "jose": "^6.0.11",
     "jsonwebtoken": "^9.0.2",
     "moment": "^2.30.1",
     "mongodb": "^3.2.6",
@@ -36,6 +41,7 @@
     "multer": "^1.4.5-lts.1",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.16",
+    "slugify": "^1.6.6",
     "socket.io": "^4.8.1",
     "stripe": "^17.6.0",
     "uuid": "^8.3.2"
