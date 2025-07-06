@@ -54,6 +54,9 @@ export default class PrayerService {
       location: { latitude, longitude },
       locationName: locationName,
     };
+    console.log("KEY", key);
+    console.log("RESULT", result);
+    console.log("RESULT", raw);
 
     prayerCache.set(key, result);
     return result;

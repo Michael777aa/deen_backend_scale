@@ -14,6 +14,7 @@ import contentRouter from "./routes/contentRouter";
 import mosqueRouter from "./routes/mosqueRouter";
 import inspirationRouter from "./routes/inspiration.router";
 import streamRouter from "./routes/streamRouter";
+import chatgptRouter from "./routes/chatgptRouter";
 
 //1-ENTRANCE
 const app = express();
@@ -33,6 +34,7 @@ app.use("/api/v1/layout", layoutRouter);
 app.use("/api/v1/prayer", prayerRouter);
 app.use("/api/v1/qibla", qiblaRouter);
 app.use("/api/v1/inspiration", inspirationRouter);
+app.use("/api/v1/chatgpt", chatgptRouter);
 app.use("/api/v1", streamRouter);
 app.use("/api/v1", calendarRouter);
 app.use("/api/v1", contentRouter);
