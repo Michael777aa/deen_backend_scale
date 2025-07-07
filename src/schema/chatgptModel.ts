@@ -16,6 +16,7 @@ const sessionSchema = new mongoose.Schema(
       },
     ],
     result: { type: String },
+    blockchainHash: { type: String },
   },
   { timestamps: true }
 );
@@ -39,11 +40,11 @@ export const saveSession = async (sessionData: any) => {
         },
       ],
       result: sessionData.result,
+      blockchainHash: sessionData.blockchainHash, // <-- Add this
     });
     return await session.save();
-  }
-  // For existing sessions
-  else {
+  } else {
+    // For existing sessions
     return await Session.findByIdAndUpdate(
       sessionData._id,
       {
@@ -54,6 +55,7 @@ export const saveSession = async (sessionData: any) => {
           },
         },
         result: sessionData.result,
+        blockchainHash: sessionData.blockchainHash, // <-- Add this
       },
       { new: true }
     );

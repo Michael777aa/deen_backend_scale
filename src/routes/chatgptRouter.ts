@@ -1,9 +1,9 @@
 import express from "express";
-import mentalController from "../controllers/mental.controller";
+import chatgptController from "../controllers/chatgpt.controller";
 const chatgptRouter = express.Router();
 
 /** Mental Health **/
 
-chatgptRouter.post("/analyze", mentalController.analyze);
+chatgptRouter.post("/analyze", chatgptController.analyze);
 
 export default chatgptRouter;

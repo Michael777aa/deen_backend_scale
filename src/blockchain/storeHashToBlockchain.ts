@@ -15,7 +15,7 @@ export const storeHashToBlockchain = async (data: string): Promise<string> => {
     // Simulate transaction delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    return `mock-tx-hash-${mockHash.substring(0, 16)}`;
+    return `mock-blockchain-hash-${mockHash.substring(0, 16)}`;
 
     /* 
     // REAL IMPLEMENTATION EXAMPLE:
