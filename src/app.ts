@@ -36,7 +36,7 @@ app.use("/api/v1/qibla", qiblaRouter);
 app.use("/api/v1/inspiration", inspirationRouter);
 app.use("/api/v1/chatgpt", chatgptRouter);
 app.use("/api/v1", streamRouter);
-app.use("/api/v1", calendarRouter);
+app.use("/api/v1/calendar", calendarRouter);
 app.use("/api/v1", contentRouter);
 app.use("/api/v1", mosqueRouter);
 
