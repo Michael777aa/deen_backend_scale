@@ -37,7 +37,7 @@ export const classifyMentalStage = async (
       {
         model: "deepseek/deepseek-chat",
         messages,
-        max_tokens: 10000, // Only one label is needed
+        max_tokens: 200, // Only one label is needed
         temperature: 0, // deterministic for classification
       },
       {
