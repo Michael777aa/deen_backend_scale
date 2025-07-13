@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Session } from "../schema/chatgptModel";
+import { Session } from "../schema/ChatgptModel";
 
 // Define the only task for the model: classification
 export const classifyMentalStage = async (
@@ -37,7 +37,7 @@ export const classifyMentalStage = async (
       {
         model: "deepseek/deepseek-chat",
         messages,
-        max_tokens: 200, // Only one label is needed
+        max_tokens: 300, // Only one label is needed
         temperature: 0, // deterministic for classification
       },
       {
@@ -45,7 +45,7 @@ export const classifyMentalStage = async (
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
           "HTTP-Referer": "http://localhost:4330",
-          "X-Title": "mental-health-classifier",
+          "X-Title": "islamic-mental-health-app",
         },
       }
     );
