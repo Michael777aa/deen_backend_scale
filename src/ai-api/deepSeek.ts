@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Session } from "../schema/ChatgptModel";
+import { Session } from "../schema/chatgptModel";
 
 // Define the only task for the model: classification
 export const classifyMentalStage = async (

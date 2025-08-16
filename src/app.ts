@@ -1,5 +1,4 @@
 import express from "express";
-import path from "path";
 import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
@@ -18,9 +17,8 @@ import chatgptRouter from "./routes/chatgptRouter";
 import quranRouter from "./routes/settingsRouter";
 import audioRouter from "./routes/audioRouter";
 
-//1-ENTRANCE
+//1-ENTRANCE MIDDLEWARES
 const app = express();
-app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static("./uploads"));
 app.use(express.json());

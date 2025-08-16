@@ -1,7 +1,7 @@
 import { classifyMentalStage } from "../ai-api/deepSeek";
 import { storeHashToBlockchain } from "../blockchain/storeHashToBlockchain";
 import { searchIslamicTopic } from "../libs/searchIslamic";
-import { Session } from "../schema/ChatgptModel";
+import { Session } from "../schema/chatgptModel";
 
 export default class ChatgptService {
   async analyze(userId: string, text: string, sessionId?: string) {
@@ -42,8 +42,6 @@ export default class ChatgptService {
     return {
       result,
       sessionId: session._id.toString(),
-      blockchainHash,
-      links,
     };
   }
 }
