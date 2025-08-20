@@ -4,16 +4,17 @@ dotenv.config({
 });
 import mongoose from "mongoose";
 import app from "./app";
+import logger from "./libs/utils/logger";
 
 mongoose
   .connect(process.env.MONGO_URL as string, {})
   .then(() => {
-    console.log("MongoDB connection succeed");
+    logger.info("MongoDB connection succeed");
     const PORT = process.env.PORT ?? 3000;
     app.listen(PORT, function () {
-      console.info(`Project running on http://localhost:${PORT} \n`);
+      logger.info(`Project running on http://localhost:${PORT} `);
     });
   })
-  .catch((err) => {
-    console.log("ERROR on connection MongoDB", err);
+  .catch((err: any) => {
+    logger.error("ERROR on connection MongoDB", err);
   });

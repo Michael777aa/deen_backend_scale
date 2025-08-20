@@ -36,6 +36,7 @@ export enum Message {
   FAILED_TO_FETCH_USER_INFO = "fail fetching the user",
   INVALID_REQUEST = "Invalid request",
   MEMBER_NOT_FOUND = "MEMBER_NOT_FOUND",
+  CHATGPT_TEXT_ERROR = "Error on text or session on request",
 }
 class Errors extends Error {
   public code: HttpCode;
