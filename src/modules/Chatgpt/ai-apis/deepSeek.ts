@@ -44,7 +44,7 @@ export const classifyMentalStage = async (
         headers: {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "http://localhost:4330",
+          "HTTP-Referer": "http://195.35.9.39:4330",
           "X-Title": "islamic-mental-health-app",
         },
         timeout: 30000,

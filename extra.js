@@ -1,8 +1,6 @@
 const fs = require("fs-extra");
 
-const directoriesToCopy = [
-  { source: "src/public", destination: "dist/public" },
-];
+const directoriesToCopy = [];
 
 async function copyDirectories() {
   try {

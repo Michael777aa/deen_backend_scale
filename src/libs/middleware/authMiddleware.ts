@@ -7,7 +7,7 @@ import logger from "../utils/logger";
 export interface AuthRequest extends Request {
   user?: any;
 }
-
+//sdaf
 export const validateToken = async (
   req: AuthRequest,
   res: Response,
