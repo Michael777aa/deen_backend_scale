@@ -1,13 +1,12 @@
 // src/middleware/authMiddleware.ts
 import { Request, Response, NextFunction } from "express";
-import * as jose from "jose";
 import { JWT_SECRET } from "../utils/constant";
 import logger from "../utils/logger";
 
 export interface AuthRequest extends Request {
   user?: any;
 }
-//sdaf
+
 export const validateToken = async (
   req: AuthRequest,
   res: Response,
@@ -32,14 +31,18 @@ export const validateToken = async (
     }
 
     try {
-      const verified = await jose.jwtVerify(
+      // Dynamic import of 'jose'
+      const { jwtVerify } = await import("jose");
+
+      const verified = await jwtVerify(
         token,
         new TextEncoder().encode(JWT_SECRET)
       );
-      req.user = verified.payload;
 
+      req.user = verified.payload;
       next();
     } catch (err) {
+      logger.warn("Invalid token attempt:", err);
       return res.status(401).json({ error: "Invalid token" });
     }
   } catch (err) {
