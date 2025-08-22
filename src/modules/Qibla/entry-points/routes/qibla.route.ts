@@ -4,10 +4,6 @@ import { validateToken } from "../../../../libs/middleware/authMiddleware";
 
 const qiblaRouter = express.Router();
 
-qiblaRouter.get(
-  "/direction",
-  //validateToken,
-  qiblaController.getQiblaDirection
-);
+qiblaRouter.get("/direction", qiblaController.getQiblaDirection);
 
 export default qiblaRouter;

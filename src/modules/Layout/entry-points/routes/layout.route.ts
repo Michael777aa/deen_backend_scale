@@ -8,14 +8,12 @@ const layoutRouter = express.Router();
 layoutRouter.get("/", layoutController.getLayout);
 layoutRouter.post(
   "/create",
-  validateToken,
   authorizeRoles("ADMIN"),
   makeUploader("layout").array("layoutImages", 5),
   layoutController.createNewLayout
 );
 layoutRouter.post(
   "/:id",
-  validateToken,
   authorizeRoles("ADMIN"),
   makeUploader("layout").array("layoutImages", 5),
   layoutController.updateChosenLayout

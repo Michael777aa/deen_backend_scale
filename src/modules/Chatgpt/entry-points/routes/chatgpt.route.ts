@@ -5,10 +5,9 @@ import { validateToken } from "../../../../libs/middleware/authMiddleware";
 
 const chatgptRouter = express.Router();
 
-chatgptRouter.post("/analyze", validateToken, chatgptController.analyze);
+chatgptRouter.post("/analyze", chatgptController.analyze);
 chatgptRouter.post(
   "/analyze/voice",
-  validateToken,
   makeUpLoader("audio").single("audio"),
   chatgptController.analyzeVoice
 );

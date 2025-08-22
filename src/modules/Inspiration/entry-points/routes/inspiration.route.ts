@@ -5,20 +5,14 @@ import { authorizeRoles } from "../../../../libs/middleware/role.Middleware";
 
 const inspirationRouter = express.Router();
 
-inspirationRouter.get(
-  "/daily",
-  // validateToken,
-  inspirationController.getDailyInspiration
-);
+inspirationRouter.get("/daily", inspirationController.getDailyInspiration);
 inspirationRouter.post(
   "/create",
-  validateToken,
   authorizeRoles("ADMIN"),
   inspirationController.createNewInspiration
 );
 inspirationRouter.post(
   "/:id",
-  validateToken,
   authorizeRoles("ADMIN"),
   inspirationController.updateChosenInspiration
 );
