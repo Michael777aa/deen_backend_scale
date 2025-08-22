@@ -16,7 +16,15 @@ import streamRouter from "./modules/Stream/entry-points/routes/stream.route";
 const app = express();
 app.use("/uploads", express.static("./uploads"));
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ credentials: true, origin: true }));
+app.use(
+  cors({
+    origin: "http://195.35.9.39:4330", // frontend URL
+    credentials: true, // allow cookies / Authorization headers
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());
