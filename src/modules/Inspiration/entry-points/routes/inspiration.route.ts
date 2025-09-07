@@ -8,12 +8,14 @@ const inspirationRouter = express.Router();
 inspirationRouter.get("/daily", inspirationController.getDailyInspiration);
 inspirationRouter.post(
   "/create",
-  authorizeRoles("ADMIN"),
+  validateToken,
+  authorizeRoles("MODERATOR"),
   inspirationController.createNewInspiration
 );
 inspirationRouter.post(
   "/:id",
-  authorizeRoles("ADMIN"),
+  validateToken,
+  authorizeRoles("MODERATOR"),
   inspirationController.updateChosenInspiration
 );
 

@@ -11,7 +11,10 @@ class InspirationService {
   private readonly inspirationModel = inspirationModel;
 
   public async getDailyInspiration(): Promise<Inspiration> {
-    const result = await this.inspirationModel.findOne().exec();
+    const result = await this.inspirationModel
+      .findOne({ isActive: true })
+      .sort({ createdAt: -1 })
+      .exec();
     if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
     return result;
   }

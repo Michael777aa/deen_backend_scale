@@ -1,22 +1,15 @@
-function isMatch(s: string, p: string): boolean {
-  const dp: boolean[][] = Array(s.length + 1)
-    .fill(false)
-    .map(() => Array(p.length + 1).fill(false));
+let myArray: number[] = [64, 34, 25, 12, 22, 11, 90, 5];
 
-  dp[s.length][p.length] = true; // both empty match
-
-  for (let i = s.length; i >= 0; i--) {
-    for (let j = p.length - 1; j >= 0; j--) {
-      const firstMatch = i < s.length && (p[j] === s[i] || p[j] === ".");
-
-      if (j + 1 < p.length && p[j + 1] === "*") {
-        dp[i][j] = dp[i][j + 2] || (firstMatch && dp[i + 1][j]);
-      } else {
-        dp[i][j] = firstMatch && dp[i + 1][j + 1];
-      }
+let n: number = myArray.length;
+for (let i = 0; i < n - 1; i++) {
+  for (let j = 0; j < n - i - 1; j++) {
+    if (myArray[j] > myArray[j + 1]) {
+      // Swap elements
+      let temp: number = myArray[j];
+      myArray[j] = myArray[j + 1];
+      myArray[j + 1] = temp;
     }
   }
-
-  return dp[0][0];
 }
-console.log(isMatch("aaaaaaa", "a*"));
+
+console.log("Sorted array:", myArray);

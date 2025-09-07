@@ -11,7 +11,7 @@ export const authorizeRoles = (...roles: string[]) => {
       });
     }
 
-    if (!roles.includes(req.user.type)) {
+    if (!roles.includes(req.user.userType)) {
       return res.status(403).json({
         message: "You do not have permission to perform this action",
         success: false,

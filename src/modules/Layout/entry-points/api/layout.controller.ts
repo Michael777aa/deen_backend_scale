@@ -16,6 +16,8 @@ const layoutController: T = {};
 layoutController.getLayout = async (req: Request, res: Response) => {
   try {
     const data = await layoutService.getLayout();
+    console.log("DATA", data);
+
     res.status(HttpCode.OK).json(data);
   } catch (err: any) {
     logger.error("Error getLayout:", err);

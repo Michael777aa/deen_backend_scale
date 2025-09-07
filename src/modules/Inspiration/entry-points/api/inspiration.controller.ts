@@ -33,6 +33,8 @@ inspirationController.createNewInspiration = async (
 ) => {
   try {
     const input = req.body;
+    console.log(req.body);
+
     const result = await inspirationService.createNewInspiration(input);
     res.status(HttpCode.CREATED).json(result);
   } catch (err) {
