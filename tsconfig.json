@@ -2,7 +2,8 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
-    "outDir": "./dist",
+    "outDir": "./dist",            
+    "rootDir": "src",               
     "strict": true,
     "types": ["node", "express"],
     "typeRoots": ["./src/types", "./node_modules/@types"],
