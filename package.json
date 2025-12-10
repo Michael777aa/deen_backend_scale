@@ -4,11 +4,11 @@
   "description": "This is deen_daily backend",
   "main": "src/server.ts",
   "scripts": {
-    "start": " ts-node src/server.ts",
-    "train": "nodemon --exec ts-node train.ts ",
+    "start": "ts-node src/server.ts",        
     "start:dev": "nodemon --exec ts-node src/server.ts",
-    "build": "tsc && node extra.js",
-    "start:prod": "node dist/server.js",
+    "build": "tsc",                          
+    "start:prod": "node dist/server.js",     
+    "train": "nodemon --exec ts-node train.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "MIT",
