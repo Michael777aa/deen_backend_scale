@@ -174,23 +174,31 @@ class StreamService {
     return result;
   }
 
-  public async quickStartStream(
-    // userId: string,
-    input: StreamInput
-  ): Promise<Stream> {
+  // In your StreamService - fix the quickStartStream method
+  public async quickStartStream(input: StreamInput): Promise<Stream> {
     try {
-      // Create the stream record
-      const stream = await this.streamModel.create({
-        ...input,
-        imam: "ABDULLAH", // Assuming imam field can be used for the streamer
-        // imam: userId, // Assuming imam field can be used for the streamer
-        status: StreamStatus.UPCOMING,
-        scheduledStartTime: new Date(),
-        chatEnabled: true,
+      // First create the Mux live stream
+      const liveStream: any = await Video.liveStreams.create({
+        playback_policy: ["public"],
+        new_asset_settings: { playback_policy: ["public"] },
+        latency_mode: "low",
       });
 
-      // Immediately start the stream
-      return await this.startStream(stream._id.toString());
+      // Create the stream record with LIVE status and Mux details
+      const stream = await this.streamModel.create({
+        ...input,
+        imam: "ABDULLAH",
+        status: StreamStatus.LIVE, // Set as LIVE immediately for quick start
+        scheduledStartTime: new Date(),
+        actualStartTime: new Date(),
+        chatEnabled: true,
+        rtmpUrl: liveStream.rtmp_ingest_url,
+        streamKey: liveStream.stream_key,
+        playbackId: liveStream.playback_ids?.[0]?.id,
+        muxStreamId: liveStream.id,
+      });
+
+      return stream;
     } catch (err) {
       console.error("Error quickStartStream:", err);
       throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);

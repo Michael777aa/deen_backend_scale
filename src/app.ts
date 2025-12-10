@@ -11,9 +11,16 @@ import inspirationRouter from "./modules/Inspiration/entry-points/routes/inspira
 import chatgptRouter from "./modules/Chatgpt/entry-points/routes/chatgpt.route";
 import streamRouter from "./modules/Stream/entry-points/routes/stream.route";
 import quranRouter from "./modules/Quran/entry-points/routes/quran.route";
+import duaRouter from "./modules/Duas/entry-points/routes/duas.route";
+import "./modules/Inspiration/domain/inspirationScheduler";
+import WebSocketService from "./modules/Stream/domain/websocket.service";
+import { createServer } from "http";
 
 // ENTRANCE
 const app = express();
+const server = createServer(app);
+const webSocketService = new WebSocketService(server);
+app.set("trust proxy", 1);
 app.use("/uploads", express.static("./uploads"));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ credentials: true, origin: true }));
@@ -30,11 +37,10 @@ app.use("/api/v1/inspiration", inspirationRouter);
 app.use("/api/v1/chatgpt", chatgptRouter);
 app.use("/api/v1/str", streamRouter);
 app.use("/api/v1/quran", quranRouter);
+app.use("/api/v1/dua", duaRouter);
 // app.use("/api/v1/calendar", calendarRouter);
 // app.use("/api/v1/audio", audioRouter);
 // app.use("/api/v1", contentRouter);
 // app.use("/api/v1", mosqueRouter);
 
-import "./modules/Inspiration/domain/inspirationScheduler";
-
-export default app;
+export default server;

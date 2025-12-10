@@ -24,4 +24,5 @@ streamRouter.post("/streams/:id/comment", streamController.addComment);
 
 streamRouter.post("/streams/:id/like", streamController.likeStream);
 streamRouter.post("/streams/quick-start", streamController.quickStart);
+
 export default streamRouter;

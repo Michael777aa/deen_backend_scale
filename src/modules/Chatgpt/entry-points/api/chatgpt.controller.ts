@@ -4,7 +4,6 @@ import ChatgptService from "../../domain/chatgpt.service";
 import { transcribeWhisper } from "../../ai-apis/transcribeWhisper";
 import logger from "../../../../libs/utils/logger";
 import { AuthRequest } from "../../../../libs/middleware/authMiddleware";
-import { shapeIntoMongooseObjectId } from "../../../../libs/utils/config";
 
 const chatgptController: any = {};
 const chatgptService = new ChatgptService();

@@ -37,6 +37,7 @@ export enum Message {
   INVALID_REQUEST = "Invalid request",
   MEMBER_NOT_FOUND = "MEMBER_NOT_FOUND",
   CHATGPT_TEXT_ERROR = "Error on text or session on request",
+  DELETE_FAILED = "DELETE FAILED",
 }
 class Errors extends Error {
   public code: HttpCode;

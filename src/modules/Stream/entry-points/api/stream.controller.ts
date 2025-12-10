@@ -4,6 +4,7 @@ import { T } from "../../../../libs/common";
 import { StreamInput, StreamUpdateInput } from "../../domain/stream.dto";
 import Errors, { HttpCode } from "../../../../libs/Error";
 import { StreamType } from "../../domain/enum";
+import logger from "../../../../libs/utils/logger";
 
 /**********************   
        STREAMS 
@@ -30,6 +31,7 @@ streamController.createNewStream = async (req: Request, res: Response) => {
 streamController.getLiveStreams = async (req: Request, res: Response) => {
   try {
     const data = await streamService.getLiveStreams();
+
     res.status(HttpCode.OK).json(data);
   } catch (err) {
     console.error("Error getLiveStreams:", err);
@@ -44,6 +46,7 @@ streamController.getLiveStreams = async (req: Request, res: Response) => {
 streamController.getAllStreams = async (req: Request, res: Response) => {
   try {
     const data = await streamService.getAllStreams();
+
     res.status(HttpCode.OK).json(data);
   } catch (err) {
     console.error("Error getAllStreams:", err);
@@ -57,7 +60,6 @@ streamController.getAllStreams = async (req: Request, res: Response) => {
 streamController.startStream = async (req: Request, res: Response) => {
   try {
     const result = await streamService.startStream(req.params.id);
-    console.log("RESULT", result);
 
     res.status(HttpCode.OK).json(result);
   } catch (err) {
@@ -206,10 +208,13 @@ streamController.addComment = async (req: Request, res: Response) => {
 streamController.quickStart = async (req: Request, res: Response) => {
   try {
     const input: StreamInput = req.body;
+    logger.info("input", input);
     const result = await streamService.quickStartStream(
       // "req.member._id",
       input
     );
+    logger.info("result", result);
+
     res.status(HttpCode.CREATED).json(result);
   } catch (err) {
     console.error("Error quickStart:", err);
